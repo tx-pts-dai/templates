@@ -31,7 +31,7 @@ jobs:
           GITHUB_SHA="${{ github.sha }}"
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-  test_docker_build_push_ecr:
+  docker_build_push:
     needs: [get_date]
     uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v1
     with:
