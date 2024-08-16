@@ -1,4 +1,4 @@
-module "lb" {
+module "@{{ app_name }}_lb" {
   source               = "github.com/tx-pts-dai/terraform-aws-lb"
   app_url              = "@{{ app_subdomain }}"
   name                 = "@{{ app_name }}"
