@@ -1,0 +1,40 @@
+name: Build and Push Docker Image to ECR
+
+on:
+  push:
+    branches:
+      - develop
+      - integration
+    tags:
+      - "*.*.*"
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  SHORT_BRANCH: ${{ contains(github.ref, 'develop') && 'dev' || contains(github.ref, 'integration') && 'igr' || 'prod' }}
+
+jobs:
+  get_date:
+    runs-on: ubuntu-latest
+    outputs:
+      date_now: ${{ steps.echo.outputs.DATE_NOW }}
+      short_branch: ${{ env.SHORT_BRANCH }}
+      short_sha: ${{ steps.echo.outputs.SHORT_SHA }}
+    steps:
+      - name: Set outputs
+        id: echo
+        run: |
+          echo "DATE_NOW=$(date +%s)" >> $GITHUB_OUTPUT
+          GITHUB_SHA="${{ github.sha }}"
+          echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+  docker_build_push:
+    needs: [get_date]
+    uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v1
+    with:
+      environment: prod
+      docker_context: .
+      image_tag: ${{ contains(github.ref, 'refs/tags/') && github.ref_name || format('{0}-{1}-{2}', needs.get_date.outputs.short_branch, needs.get_date.outputs.short_sha, needs.get_date.outputs.date_now) }}
