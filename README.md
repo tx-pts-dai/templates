@@ -1,5 +1,7 @@
 # Templates
 
+Holds templates that can be customized through your favourite template engine (e.g. [Jinja](https://palletsprojects.com/projects/jinja/)). 
+
 For an application you can pick your favourite [base](./bases/), and then add any addons you like.
 
 These are the rules:
