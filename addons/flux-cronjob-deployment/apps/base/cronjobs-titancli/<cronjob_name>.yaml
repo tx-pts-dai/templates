@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: <cronjob_name>
+spec:
+  concurrencyPolicy: Replace
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: <cronjob_name>
+          labels:
+            app: <cronjob_name>
+        spec:
+          containers:
+            - name: titancli
+              image: tamediapmd-cloud.jfrog.io/titan-cli:0.0.1
+              volumeMounts:
+                - name: config
+                  readOnly: true
+                  mountPath: /usr/src/app/config/default.json
+                  subPath: default.json
+      backoffLimit: 1
