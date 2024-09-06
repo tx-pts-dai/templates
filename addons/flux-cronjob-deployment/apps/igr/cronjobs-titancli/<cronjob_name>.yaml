@@ -1,23 +1,23 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: <cronjob_name>
+  name: @{{ cronjob_name }}
 spec:
-  schedule: "*/5 * * * *" # "every 5 minutes"
+  schedule: @{{ cronjob_schedule }}
   jobTemplate:
     spec:
       template:
         metadata:
-          name: <cronjob_name>
+          name: @{{ cronjob_name }}
           labels:
-            app: <cronjob_name>
+            app: @{{ cronjob_name }}
         spec:
           restartPolicy: "Never"
           containers:
           - name: titancli
             image: tamediapmd-cloud.jfrog.io/titan-cli:igr-8c3166a-1676450548 # {"$imagepolicy": "flux-system:igr-titan-cli"}
             args:
-            - <cronjob_name> # --> <short_name>
+            - @{{ suffix }}
           volumes:
           - name: config # secret used by Titan CLI
             secret:
