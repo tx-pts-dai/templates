@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: <cronjob_name>
+  name: @{{ cronjob_name }}
 spec:
   concurrencyPolicy: Replace
   failedJobsHistoryLimit: 1
@@ -10,9 +10,9 @@ spec:
     spec:
       template:
         metadata:
-          name: <cronjob_name>
+          name: @{{ cronjob_name }}
           labels:
-            app: <cronjob_name>
+            app: @{{ cronjob_name }}
         spec:
           containers:
             - name: titancli
