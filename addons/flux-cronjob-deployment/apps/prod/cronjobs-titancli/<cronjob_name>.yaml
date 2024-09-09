@@ -14,14 +14,14 @@ spec:
         spec:
           restartPolicy: "Never"
           containers:
-          - name: titancli
-            image: tamediapmd-cloud.jfrog.io/titan-cli:1.4.0 # {"$imagepolicy": "flux-system:prod-titan-cli"}
-            args:
-            - @{{ container_arg }}  
+            - name: titancli
+              image: tamediapmd-cloud.jfrog.io/titan-cli:1.4.0 # {"$imagepolicy": "flux-system:prod-titan-cli"}
+              args:
+                - @{{ container_arg }}  
         volumes:
           - name: config
             secret:
               secretName: cronjobs-titancli-default.json-prod
               defaultMode: 420
           imagePullSecrets:
-          - name: regcred-prod
+            - name: regcred-prod
