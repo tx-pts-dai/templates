@@ -15,6 +15,7 @@ spec:
           labels:
             app: @{{ cronjob_name }}
         spec:
+          restartPolicy: "Never"
           containers:
             - name: titancli
               image: tamediapmd-cloud.jfrog.io/titan-cli:0.0.1
