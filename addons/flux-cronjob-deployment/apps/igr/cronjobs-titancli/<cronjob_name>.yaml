@@ -18,7 +18,7 @@ spec:
             image: tamediapmd-cloud.jfrog.io/titan-cli:igr-8c3166a-1676450548 # {"$imagepolicy": "flux-system:igr-titan-cli"}
             args:
             - @{{ container_arg }}
-          volumes:
+        volumes:
           - name: config # secret used by Titan CLI
             secret:
               secretName: cronjobs-titancli-default.json-igr
