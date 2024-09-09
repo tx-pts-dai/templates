@@ -12,7 +12,6 @@ spec:
           labels:
             app: @{{ cronjob_name }}
         spec:
-          restartPolicy: "Never"
           containers:
             - name: titancli
               image: tamediapmd-cloud.jfrog.io/titan-cli:1.4.0 # {"$imagepolicy": "flux-system:prod-titan-cli"}
