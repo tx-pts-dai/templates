@@ -7,10 +7,6 @@ spec:
   jobTemplate:
     spec:
       template:
-        metadata:
-          name: @{{ cronjob_name }}
-          labels:
-            app: @{{ cronjob_name }}
         spec:
           restartPolicy: "Never"
           containers:
