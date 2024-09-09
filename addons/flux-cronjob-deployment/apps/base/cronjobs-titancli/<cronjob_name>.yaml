@@ -3,6 +3,7 @@ kind: CronJob
 metadata:
   name: @{{ cronjob_name }}
 spec:
+  schedule: "5 * * * *"
   concurrencyPolicy: Replace
   failedJobsHistoryLimit: 1
   successfulJobsHistoryLimit: 1
