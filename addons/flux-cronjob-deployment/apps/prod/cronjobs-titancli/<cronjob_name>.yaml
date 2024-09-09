@@ -2,25 +2,25 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: @{{ cronjob_name }}
- spec:
-   schedule: "@{{ cronjob_schedule }}"
-   jobTemplate:
-     spec:
-       template:
-         metadata:
-           name: @{{ cronjob_name }}
-           labels:
-             app: @{{ cronjob_name }}
-         spec:
-           containers:
-             - name: titancli
-               image: tamediapmd-cloud.jfrog.io/titan-cli:1.4.0 # {"$imagepolicy": "flux-system:prod-titan-cli"}
-               args:
-                 - @{{ container_arg }}  
-           volumes:
-             - name: config
-               secret:
-                 secretName: cronjobs-titancli-default.json-prod
-                 defaultMode: 420
-           imagePullSecrets:
-             - name: regcred-prod
+spec:
+  schedule: "@{{ cronjob_schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: @{{ cronjob_name }}
+          labels:
+            app: @{{ cronjob_name }}
+        spec:
+          containers:
+            - name: titancli
+              image: tamediapmd-cloud.jfrog.io/titan-cli:1.4.0 # {"$imagepolicy": "flux-system:prod-titan-cli"}
+              args:
+                - @{{ container_arg }}  
+          volumes:
+            - name: config
+              secret:
+                secretName: cronjobs-titancli-default.json-prod
+                defaultMode: 420
+          imagePullSecrets:
+            - name: regcred-prod
