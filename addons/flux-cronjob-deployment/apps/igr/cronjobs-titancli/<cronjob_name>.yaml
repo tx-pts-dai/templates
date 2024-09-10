@@ -15,8 +15,12 @@ spec:
           containers:
             - name: titancli
               image: tamediapmd-cloud.jfrog.io/titan-cli:igr-8c3166a-1676450548 # {"$imagepolicy": "flux-system:igr-titan-cli"}
+              {% if container_args|length > 0 %}
               args:
-                - @{{ container_arg }}
+              {% endif %}
+                {% for arg in container_args -%}
+                - @{{ arg }}
+                {% endfor %}
           volumes:
             - name: config # secret used by Titan CLI
               secret:
