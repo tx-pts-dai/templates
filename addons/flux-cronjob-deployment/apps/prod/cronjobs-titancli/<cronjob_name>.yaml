@@ -16,11 +16,11 @@ spec:
             - name: titancli
               image: tamediapmd-cloud.jfrog.io/titan-cli:1.4.0 # {"$imagepolicy": "flux-system:prod-titan-cli"}
               {%- if container_args|length > 0 %}
-              args: 
-              {% endif %}
+              args:
                 {%- for arg in container_args %}
-                - @{{ arg }} 
+                - @{{ arg }}
                 {%- endfor %}
+              {%- endif %}
           volumes:
             - name: config
               secret:
