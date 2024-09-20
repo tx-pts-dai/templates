@@ -2,6 +2,8 @@
 
 Github workflow to build an application image, tag it and push it to an ECR repository
 
+This is for the @{{ service_name }} service
+
 It's designed for repositories were build and push are triggered by:
 
 - commits on `develop` branch (image tagged with `dev-/sha256/-/date/`)
