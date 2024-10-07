@@ -1,0 +1,33 @@
+{
+  "project_name": "My Test App",
+  "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "package_name": "@{{ cookiecutter.project_slug.lower().replace('-', '_') }}",
+  "github_repo": "@{{ cookiecutter.project_slug }}",
+  "github_org": ["dnd-it", "tx-pts-dai", "tx-group-adm"],
+
+  "environments": {
+    "dev": {
+      "tf_state_bucket": "",
+      "tf_state_key": "@{{ cookiecutter.project_slug }}/terraform.tfstate",
+      "tf_state_region": "eu-central-1"
+    },
+    "sandbox": {
+      "tf_state_bucket": "",
+      "tf_state_key": "@{{ cookiecutter.project_slug }}/terraform.tfstate",
+      "tf_state_region": "eu-central-1"
+    },
+    "prod": {
+      "tf_state_bucket": "",
+      "tf_state_key": "@{{ cookiecutter.project_slug }}/terraform.tfstate",
+      "tf_state_region": "eu-central-1"
+    }
+  },
+
+  "__prompts__": {
+    "project_name": "Enter the name of the project",
+    "project_slug": "URL Safe Project Name.",
+    "package_name": "Enter the name of the package"
+  },
+
+  "_jinja2_env_vars": {"variable_start_string": "@{{", "variable_end_string": "}}"}
+}
