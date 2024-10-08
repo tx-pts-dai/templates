@@ -15,7 +15,7 @@ environments = @{{ cookiecutter.environments }}
 template_dir = os.getcwd()
 
 env = Environment(loader=FileSystemLoader(template_dir),
-                #   variable_start_string='<<', variable_end_string='>>'
+                  variable_start_string='<<', variable_end_string='>>'
                   )
 
 templates = [
@@ -35,12 +35,9 @@ for template_name in env.list_templates():
     for environment_name, environment_data in environments.items():
         rendered_content = template.render(
             environment=environment_name,
-            cookiecutter={
-                "tf_state_backend": environment_data["tf_state_bucket"],
-                "tf_state_key": environment_data["tf_state_key"],
-                "tf_state_region": environment_data["tf_state_region"],
-            }
+            cookiecutter=environment_data
         )
+
         output_filename = f"{environment_name}.{template_basename}".rstrip(".j2")
         output_file_path = os.path.join(template_dir, os.path.dirname(template_name), output_filename)
 

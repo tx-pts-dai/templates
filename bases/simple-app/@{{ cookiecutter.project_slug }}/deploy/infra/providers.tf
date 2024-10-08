@@ -1,5 +1,5 @@
 locals {
-  region = "@{{ aws_region }}"
+  region = "@{{ cookiecutter.aws_region }}"
 }
 
 terraform {

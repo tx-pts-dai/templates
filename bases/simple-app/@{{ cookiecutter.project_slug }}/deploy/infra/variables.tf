@@ -1,7 +1,7 @@
 variable "app_name" {
   description = "Name of the application"
   type        = string
-  default     = "@{{ app_name }}"
+  default     = "@{{ cookiecutter.app_name }}"
 }
 
 variable "environment" {
@@ -12,7 +12,7 @@ variable "environment" {
 variable "github_repo" {
   description = "Git repository name"
   type        = string
-  default     = "@{{ github_repo }}"
+  default     = "@{{ cookiecutter.github_repo }}"
 }
 
 variable "github_org" {

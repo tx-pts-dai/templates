@@ -1,5 +1,5 @@
 locals {
-  region = "@{{ aws_region }}"
+  region = "@{{ cookiecutter.aws_region }}"
 }
 terraform {
   required_version = "~> 1.9.0"
@@ -61,7 +61,7 @@ data "terraform_remote_state" "infra_local" {
   backend = "s3"
   config = {
     bucket = var.tf_state_bucket
-    key    = "@{{ infra_tf_state_key }}"
+    key    = "@{{ cookiecutter.infra_tf_state_key }}"
   }
 }
 
