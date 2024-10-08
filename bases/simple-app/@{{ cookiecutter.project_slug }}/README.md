@@ -1,4 +1,4 @@
-# @{{ app_name }}
+# foo
 
 ## Folder structure
 
@@ -24,9 +24,3 @@ Testing infrastructure changes is performed on each feature branch ( `terraform 
 ### Application
 
 Manual deployment to staging environments can be performed in Github through "Actions" -> "Application" -> "Run workflow" button. Example [ai-tools](https://github.com/DND-IT/discovery-ai-tools/actions/workflows/application.yaml)
-
-## Notes
-
-{% if tam_cli_version %}
-_Initialized through Tam CLI @{{ tam_cli_version }}_
-{% endif %}

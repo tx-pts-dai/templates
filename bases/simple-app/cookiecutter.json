@@ -1,0 +1,25 @@
+{
+  "project_name": "My Simple App",
+  "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "package_name": "@{{ cookiecutter.project_slug.lower().replace('-', '_') }}",
+  "github_repo": "@{{ cookiecutter.project_slug }}",
+  "github_org": ["dnd-it", "tx-pts-dai", "tx-group-adm"],
+  "environments": {},
+
+  "app_name": "foo",
+  "app_url_type": "http",
+  "app_subdomain": "foo",
+  "aws_region": "us-west-2",
+  "infra_tf_state_key": "bllaaa-terraform.tfstate",
+  "test_tf_state_key": "bllaaa-test-terraform.tfstate",
+  "app_healthcheck_endpoint": "/healthcheck",
+  "zone_name": "example.com",
+
+  "__prompts__": {
+    "project_name": "Enter the name of the project",
+    "project_slug": "URL Safe Project Name.",
+    "package_name": "Enter the name of the package"
+  },
+
+  "_jinja2_env_vars": {"variable_start_string": "@{{", "variable_end_string": "}}"}
+}
