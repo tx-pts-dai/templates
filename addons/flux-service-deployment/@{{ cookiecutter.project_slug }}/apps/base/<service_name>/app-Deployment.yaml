@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: @{{ cookiecutter.service_name }}
-          image: @{{ cookeiecutter.ecr_aws_accoun_id }}.dkr.ecr.eu-west-1.amazonaws.com/@{{ cookiecutter.service_name }}:dev-fe0876a-1634820169
+          image: @{{ cookiecutter.ecr_aws_account_id }}.dkr.ecr.eu-west-1.amazonaws.com/@{{ cookiecutter.service_name }}:dev-fe0876a-1634820169
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

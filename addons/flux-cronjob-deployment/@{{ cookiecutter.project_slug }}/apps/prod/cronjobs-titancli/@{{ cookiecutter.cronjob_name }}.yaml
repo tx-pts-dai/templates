@@ -4,7 +4,7 @@ kind: CronJob
 metadata:
   name: @{{ cookiecutter.cronjob_name }}
 spec:
-  schedule: "@{{ cronjob_schedule }}"
+  schedule: "@{{ cookiecutter.cronjob_schedule }}"
   jobTemplate:
     spec:
       template:
@@ -16,9 +16,9 @@ spec:
           containers:
             - name: titancli
               image: tamediapmd-cloud.jfrog.io/titan-cli:1.4.0 # {"$imagepolicy": "flux-system:prod-titan-cli"}
-              {%- if container_args|length > 0 %}
+              {%- if cookiecutter.container_args|length > 0 %}
               args:
-                {%- for arg in container_args %}
+                {%- for arg in cookiecutter.container_args %}
                 - @{{ arg }}
                 {%- endfor %}
               {%- endif %}
