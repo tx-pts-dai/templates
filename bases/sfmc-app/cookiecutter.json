@@ -1,0 +1,11 @@
+{
+  "project_name": "sfmc App",
+  "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "service_name": "@{{ cookiecutter.project_slug }}",
+  "__prompts__": {
+    "project_name": "Enter the name of the project",
+    "project_slug": "URL Safe Project Name.",
+    "service_name": "Enter the name of the service"
+  },
+  "_jinja2_env_vars": {"variable_start_string": "@{{", "variable_end_string": "}}"}
+}

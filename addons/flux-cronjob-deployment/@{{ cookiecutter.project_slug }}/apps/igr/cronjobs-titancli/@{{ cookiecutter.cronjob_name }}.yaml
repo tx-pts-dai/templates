@@ -1,16 +1,16 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: @{{ cronjob_name }}
+  name: @{{ cookiecutter.cronjob_name }}
 spec:
   schedule: "@{{ cronjob_schedule }}"
   jobTemplate:
     spec:
       template:
         metadata:
-          name: @{{ cronjob_name }}
+          name: @{{ cookiecutter.cronjob_name }}
           labels:
-            app: @{{ cronjob_name }}
+            app: @{{ cookiecutter.cronjob_name }}
         spec:
           containers:
             - name: titancli

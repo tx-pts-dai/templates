@@ -1,7 +1,7 @@
 module.exports = {
    apps: [
       {
-         name: "@{{ service_name }}",
+         name: "@{{ cookiecutter.service_name }} }}",
          script: "main.js",
          instances: 1,
          autorestart: true,
