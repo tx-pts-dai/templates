@@ -1,6 +1,6 @@
 # Templates
 
-Holds templates that can be customized through your favourite template engine (e.g. [Jinja](https://palletsprojects.com/projects/jinja/)). 
+Holds templates that can be customized through your favourite template engine (e.g. [Jinja](https://palletsprojects.com/projects/jinja/)).
 
 For an application you can pick your favourite [base](./bases/), and then add any addons you like.
 
@@ -11,6 +11,25 @@ These are the rules:
 
 That's how you identify if your template is a `base` or an `addon`.
 
-## TODO
+# Cookiecutter
 
-Define variables that each Jinja template expects
+This repository maintains multiple [cookiecutter](https://www.cookiecutter.io/) templates.
+
+To configure a cookie cutter template, create a `cookiecutter.json` file in the root of the template directory. In that directory you then can add your folder with the templated files.
+
+Example:
+```
+├── @{{ cookiecutter.project_slug }}
+│   ├── docs
+│   │   ├── README.md
+│   │   ├── faq.md
+│   │   ├── getting-started.md
+│   │   ├── index.md
+│   │   └── requirements.txt
+│   └── mkdocs.yaml
+└── cookiecutter.json
+```
+
+Folder names can also be templated, so you can use the `@{{ cookiecutter.project_slug }}` variable in the folder name.
+
+All the variables in the `cookiecutter.json` file are required to be used at least once in the template files otherwise an error will be produced.

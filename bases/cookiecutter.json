@@ -1,0 +1,9 @@
+{
+  "templates": {
+    "simple-app": {
+      "path": "./simple-app",
+      "title": "Simple App",
+      "description": "Cookiecutter template for a simple app (Python)"
+    }
+  }
+}

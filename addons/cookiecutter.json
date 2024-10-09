@@ -1,0 +1,14 @@
+{
+  "templates": {
+    "flux-service-deployment": {
+      "path": "./flux-service-deployment",
+      "title": "Flux Service Deployment",
+      "description": "Cookiecutter template for deploying a new service SFMC with Flux"
+    },
+    "mkdocs": {
+      "path": "./mkdocs",
+      "title": "MKDocs",
+      "description": "Cookiecutter template for MKDocs"
+    }
+  }
+}
