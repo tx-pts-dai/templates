@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
-site_name: @{{ repo_display_name }}
-site_description: @{{ repo_description }}
+site_name: @{{ cookiecutter.project_name }}
+site_description: @{{ cookiecutter.project_description }}
 docs_dir: docs/
-site_author: @{{ team }}
-site_url: https://@{{ org }}.github.io/@{{ repo }}/
-repo_name: @{{ repo }}
-repo_url: @{{ repo_url }}
+site_author: @{{ cookiecutter.team }}
+site_url: https://@{{ cookiecutter.github_org }}.github.io/@{{ cookiecutter.github_repo }}/
+repo_name: @{{ cookiecutter.github_org }}/@{{ cookiecutter.github_repo }}
+repo_url: https://github.com/@{{ cookiecutter.github_org }}/@{{ cookiecutter.github_repo }}
 
 theme:
   name: material
@@ -48,7 +48,7 @@ theme:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: @{{ repo_url }}
+      link: https://github.com/@{{ cookiecutter.github_org }}/@{{ cookiecutter.github_repo }}
   analytics:
     provider: google
     property: G-J2L3YBBVQJ
