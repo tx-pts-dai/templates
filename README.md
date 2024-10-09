@@ -15,10 +15,11 @@ That's how you identify if your template is a `base` or an `addon`.
 
 This repository maintains multiple [cookiecutter](https://www.cookiecutter.io/) templates.
 
-To configure a cookie cutter template, create a `cookiecutter.json` file in the root of the template directory. In that directory you then can add your folder with the templated files.
+To configure a cookie cutter template, create a `cookiecutter.json` file in the root of the template directory and add your folder with the templated files. Folder names can also be templated, so you can use the `@{{ cookiecutter.project_slug }}` variable in the folder name.
 
 Example:
 ```
+mkdocs
 ├── @{{ cookiecutter.project_slug }}
 │   ├── docs
 │   │   ├── README.md
@@ -28,8 +29,7 @@ Example:
 │   │   └── requirements.txt
 │   └── mkdocs.yaml
 └── cookiecutter.json
-```
 
-Folder names can also be templated, so you can use the `@{{ cookiecutter.project_slug }}` variable in the folder name.
+```
 
 All the variables in the `cookiecutter.json` file are required to be used at least once in the template files otherwise an error will be produced.

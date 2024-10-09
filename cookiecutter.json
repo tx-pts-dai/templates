@@ -2,12 +2,12 @@
   "templates": {
     "bases": {
       "path": "./bases",
-      "title": "Repository Templates",
-      "description": "Cookiecutter templates for repositories"
+      "title": "Bases",
+      "description": "Cookiecutter templates for base repositories"
     },
     "addons": {
       "path": "./addons",
-      "title": "Addon Templates",
+      "title": "Addons",
       "description": "Cookiecutter templates for additional features"
     }
   }
