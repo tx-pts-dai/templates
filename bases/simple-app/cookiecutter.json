@@ -6,14 +6,14 @@
   "github_org": ["dnd-it", "tx-pts-dai", "tx-group-adm"],
   "app_name": "foo",
   "app_subdomain": "bar",
-  "aws_region": "us-west-2",
+  "aws_region": "eu-central-1",
   "infra_tf_state_key": "bllaaa-terraform.tfstate",
   "zone_name": "example.com",
   "environments": {
     "fake-env": {
       "tf_state_bucket": "some-fake-bucket",
       "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate",
-      "tf_state_region": "us-west-2"
+      "tf_state_region": "eu-central-1"
     }
   },
   "__prompts__": {
