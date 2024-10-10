@@ -1,4 +1,4 @@
-# @{{ cookiecutter.service_name }} }}
+# @{{ cookiecutter.service_name }}
 
 ## Deployment
 
