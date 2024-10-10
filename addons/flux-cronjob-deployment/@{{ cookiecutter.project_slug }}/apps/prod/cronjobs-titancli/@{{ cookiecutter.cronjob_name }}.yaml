@@ -1,0 +1,31 @@
+$patch: delete
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: @{{ cookiecutter.cronjob_name }}
+spec:
+  schedule: "@{{ cookiecutter.cronjob_schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: @{{ cookiecutter.cronjob_name }}
+          labels:
+            app: @{{ cookiecutter.cronjob_name }}
+        spec:
+          containers:
+            - name: titancli
+              image: tamediapmd-cloud.jfrog.io/titan-cli:1.4.0 # {"$imagepolicy": "flux-system:prod-titan-cli"}
+              {%- if cookiecutter.container_args|length > 0 %}
+              args:
+                {%- for arg in cookiecutter.container_args %}
+                - @{{ arg }}
+                {%- endfor %}
+              {%- endif %}
+          volumes:
+            - name: config
+              secret:
+                secretName: cronjobs-titancli-default.json-prod
+                defaultMode: 420
+          imagePullSecrets:
+            - name: regcred-prod

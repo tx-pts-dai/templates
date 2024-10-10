@@ -1,0 +1,11 @@
+{
+  "service_name": "New Service Name",
+  "project_slug": "@{{ cookiecutter.service_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "ecr_aws_account_id": "",
+
+  "__prompts__": {
+    "service_name": "Enter the name of the new service to be deployed",
+    "ecr_aws_account_id": "Enter the AWS account ID for the ECR repository"
+  },
+  "_jinja2_env_vars": {"variable_start_string": "@{{", "variable_end_string": "}}"}
+}

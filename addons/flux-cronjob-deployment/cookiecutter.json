@@ -1,0 +1,15 @@
+{
+  "cronjob_name": "New CronJob Name",
+  "project_slug": "@{{ cookiecutter.cronjob_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "cronjob_schedule": "0 7 * * 1",
+  "container_args": "",
+  "ecr_aws_account_id": "",
+
+  "__prompts__": {
+    "cronjob_name": "Enter the name of the new cronjob to be deployed",
+    "cronjob_schedule": "Enter the cron schedule for the cronjob: e.g. '0 7 * * 1' 7am every Monday",
+    "container_args": "Enter the arguments to be passed to the container",
+    "ecr_aws_account_id": "Enter the AWS account ID for the ECR repository"
+  },
+  "_jinja2_env_vars": {"variable_start_string": "@{{", "variable_end_string": "}}"}
+}

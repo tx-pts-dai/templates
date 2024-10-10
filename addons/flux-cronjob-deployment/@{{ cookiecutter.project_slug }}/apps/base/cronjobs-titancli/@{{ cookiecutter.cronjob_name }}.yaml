@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: @{{ cookiecutter.cronjob_name }}
+spec:
+  schedule: "5 * * * *"
+  concurrencyPolicy: Replace
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: @{{ cookiecutter.cronjob_name }}
+          labels:
+            app: @{{ cookiecutter.cronjob_name }}
+        spec:
+          restartPolicy: "Never"
+          containers:
+            - name: titancli
+              image: tamediapmd-cloud.jfrog.io/titan-cli:0.0.1
+              env:
+                - name: STAGE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+              volumeMounts:
+                - name: config
+                  readOnly: true
+                  mountPath: /usr/src/app/config/default.json
+                  subPath: default.json
+      backoffLimit: 1

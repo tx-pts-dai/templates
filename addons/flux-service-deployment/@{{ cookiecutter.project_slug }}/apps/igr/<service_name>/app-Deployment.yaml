@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: @{{ cookiecutter.service_name }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: @{{ cookiecutter.service_name }}
+          image: @{{ cookiecutter.ecr_aws_account_id }}.dkr.ecr.eu-west-1.amazonaws.com/@{{ cookiecutter.service_name }}:igr-2490e8a-1709803023 # {"$imagepolicy": "flux-system:igr-@{{ cookiecutter.service_name }}"}
+          envFrom:
+            - secretRef:
+                name: @{{ cookiecutter.service_name }}-env-dev
+      imagePullSecrets:
+        - name: regcred-dev

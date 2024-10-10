@@ -1,0 +1,19 @@
+{
+  "templates": {
+    "flux-cronjob-deployment": {
+      "path": "./flux-cronjob-deployment",
+      "title": "Flux CronJob Deployment",
+      "description": "Cookiecutter template for deploying a new SFMC cronjob"
+    },
+    "flux-service-deployment": {
+      "path": "./flux-service-deployment",
+      "title": "Flux Service Deployment",
+      "description": "Cookiecutter template for deploying a new SFMC service"
+    },
+    "mkdocs": {
+      "path": "./mkdocs",
+      "title": "MKDocs",
+      "description": "Cookiecutter template for MKDocs"
+    }
+  }
+}
