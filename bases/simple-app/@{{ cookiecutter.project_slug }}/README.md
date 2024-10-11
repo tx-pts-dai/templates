@@ -2,16 +2,16 @@
 
 ## Folder structure
 
-* Application source code is stored in the [`application/`](./application/) folder
-* Terraform code to perform infrastructure deployments is stored in the [`deploy/`](./deploy/) folder. 
-    - [`deploy/infrastructure/`](./deploy/infrastructure/) for all the app-related infrastructure. 
-    - [`deploy/application/`](./deploy/application/) for the Helm release that will deploy new versions of your application.
+* Application source code is stored in the [`@{{ cookiecutter.app_name }}/`](./@{{ cookiecutter.app_name }}/) folder
+* Terraform code to perform infrastructure deployments is stored in the [`deploy/`](./deploy/) folder.
+  * [`deploy/infra/`](./deploy/infra/) for all the app-related infrastructure.
+  * [`deploy/app/`](./deploy/app/) for the Helm release that will deploy new versions of your application.
 
 ## Deployment
 
-This project uses [GitHub Actions](https://docs.github.com/en/actions) to deploy the application and infrastructure. 
+This project uses [GitHub Actions](https://docs.github.com/en/actions) to deploy the application and infrastructure.
 
-The workflow is defined in [ `.github/workflows/application.yaml` ](.github/workflows/application.yaml) which uses a reusable workflow that is loaded from [Tamedia shared workflows](https://github.com/tx-pts-dai/github-workflows).
+The workflow is defined in [`.github/workflows/app.yaml`](.github/workflows/app.yaml) which uses a reusable workflow that is loaded from [Tamedia shared workflows](https://github.com/tx-pts-dai/github-workflows).
 
 All the environments are deployed sequentially when pushing to the `main` branch. Please modify the workflows if you want to change the triggers. You can follow examples like [ai-tools](https://github.com/DND-IT/discovery-ai-tools) or [fuw-factsheets](https://github.com/DND-IT/fuw-factsheets).
 
