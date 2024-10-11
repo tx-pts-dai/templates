@@ -1,14 +1,12 @@
 {
   "project_name": "My Simple App",
   "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
-  "package_name": "@{{ cookiecutter.project_slug.lower().replace('-', '_') }}",
-  "github_repo": "@{{ cookiecutter.repository }}.split('/', 1)[1]",
-  "github_org": "@{{ cookiecutter.repository }}.split('/', 1)[0]",
+  "github_repo": "@{{ repository }}.split('/', 1)[1]",
+  "github_org": "@{{ repository }}.split('/', 1)[0]",
   "app_name": "foo",
   "app_subdomain": "bar",
   "zone_name": "example.com",
   "__prompts__": {
-    "project_name": "Enter the name of the project",
     "project_slug": "URL Safe Project Name."
   },
   "_jinja2_env_vars": {
