@@ -26,7 +26,6 @@ provider "aws" {
       Terraform   = "true"
       Environment = var.environment
       GithubRepo  = var.github_repo
-      GithubOrg   = var.github_org
     }
   }
 }

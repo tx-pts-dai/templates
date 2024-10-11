@@ -1,7 +1,38 @@
 locals {
-  app_name        = var.app_name
-  namespace       = var.app_name # must match the namespace in the ./deploy/application/main.tf
-  service_account = var.app_name
+  # TODO: should allow multiple app names in case multiple apps exist in same repo
+  app_name         = var.app_name
+  namespace        = var.app_name # must match the namespace in the ./deploy/app/main.tf
+  service_account  = var.app_name
+  ecr_repositories = [var.gitub_repo]
+  ecr_lifecycle_policy = jsonencode({
+    "rules" : [
+      {
+        "rulePriority" : 1,
+        "description" : "Keep only 50 untagged image, delete all others",
+        "selection" : {
+          "tagStatus" : "untagged",
+          "countType" : "imageCountMoreThan",
+          "countNumber" : 50
+        },
+        "action" : {
+          "type" : "expire"
+        }
+      },
+      {
+        "rulePriority" : 2,
+        "description" : "Delete image older than 6 months",
+        "selection" : {
+          "tagStatus" : "any",
+          "countType" : "sinceImagePushed",
+          "countUnit" : "days",
+          "countNumber" : 183
+        },
+        "action" : {
+          "type" : "expire"
+        }
+      }
+    ]
+  })
 }
 
 module "platform_ssm" {
@@ -16,12 +47,22 @@ module "platform_ssm" {
 }
 
 resource "aws_ecr_repository" "this" {
-  name                 = var.github_repo
+  for_each = toset(local.ecr_repositories)
+
+  name                 = each.value
   image_tag_mutability = "MUTABLE"
 
   force_delete = true
 }
 
+resource "aws_ecr_lifecycle_policy" "this" {
+  for_each = aws_ecr_repository.this
+
+  repository = each.value.name
+  policy     = local.ecr_lifecycle_policy
+}
+
+# TODO: Why is this here and not in the app ?
 resource "aws_iam_policy" "get_all_secrets" {
   name        = "GetAllSecretsPolicy-${local.app_name}"
   description = "Policy to allow getting all secrets from AWS Secrets Manager"

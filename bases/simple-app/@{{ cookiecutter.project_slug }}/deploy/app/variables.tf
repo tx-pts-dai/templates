@@ -24,7 +24,7 @@ variable "github_org" {
 variable "github_repo" {
   description = "Git repository name"
   type        = string
-  default     = "@{{ cookiecutter.github_repo }}"
+  default     = "@{{ cookiecutter.repository }}"
 }
 
 variable "helm_enable_ingress" {
