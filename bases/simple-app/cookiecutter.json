@@ -18,8 +18,7 @@
   },
   "__prompts__": {
     "project_name": "Enter the name of the project",
-    "project_slug": "URL Safe Project Name.",
-    "package_name": "Enter the name of the package"
+    "project_slug": "URL Safe Project Name."
   },
   "_jinja2_env_vars": {
     "variable_start_string": "@{{",
