@@ -1,0 +1,26 @@
+name: Cleanup Feature Branch
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  destroy_feature:
+    name: Destroy Feature Branch
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-cleanup.yaml@v2
+    with:
+      aws_region: eu-central-1
+      aws_oidc_role_arn: arn:aws:iam::269132892972:role/cicd-iac
+      tf_dir: deploy/terraform
+      tf_backend_config_files: "deploy/terraform/environments/dev.s3.tfbackend"
+      tf_var_files: "deploy/terraform/environments/dev.tfvars"
+      tf_workspace: ${{ github.head_ref || github.ref  }}
+      tf_vars: |
+        image_tag="not_needed_for_destroy"
+        branch="${{ github.head_ref || github.ref }}"

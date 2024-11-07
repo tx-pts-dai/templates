@@ -1,0 +1,57 @@
+name: Infrastructure
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "deploy/infrastructure/**"
+      - ".github/workflows/infrastructure.yaml"
+
+  pull_request:
+    branches: [main]
+    paths:
+      - "deploy/infrastructure/**"
+      - ".github/workflows/infrastructure.yaml"
+
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  plan:
+    if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - environment: dev
+            aws-account-id: 269132892972
+          - environment: prod
+            aws-account-id: 883535314275
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v1
+    with:
+      aws_region: eu-central-1
+      aws_oidc_role_arn: arn:aws:iam::269132892972:role/cicd-iac
+      tf_dir: deploy/infrastructure
+      tf_backend_config_files: deploy/infrastructure/environments/${{ matrix.environment }}.s3.tfbackend
+
+  apply:
+    if: github.ref_name == github.event.repository.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        include:
+          - environment: dev
+            aws-account-id: 269132892972
+          - environment: prod
+            aws-account-id: 883535314275
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v1
+    with:
+      aws_region: eu-central-1
+      aws_oidc_role_arn: arn:aws:iam::269132892972:role/cicd-iac
+      tf_dir: deploy/infrastructure
+      tf_backend_config_files: deploy/infrastructure/environments/${{ matrix.environment }}.s3.tfbackend

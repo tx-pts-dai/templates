@@ -1,11 +1,8 @@
 {
-<<<<<<< HEAD
+  "project_name": "My Project",
+  "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
   "image_name": "disco-image",
   "docker_context": "./context",
-=======
-  "image_name": "@{{ cookiecutter.project_slug }}-image",
-  "docker_context": "./@{{ cookiecutter.project_slug }}",
->>>>>>> parent of c21f6a5 (adding project_name)
   "dockerfile_path": "@{{ cookiecutter.docker_context }}/Dockerfile",
   "environments_folder": "deploy/terraform/environments",
   "environments": {
