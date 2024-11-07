@@ -1,0 +1,23 @@
+{
+  "image_name": "@{{ cookiecutter.project_slug }}-image",
+  "docker_context": "./@{{ cookiecutter.project_slug }}",
+  "dockerfile_path": "@{{ cookiecutter.docker_context }}/Dockerfile",
+  "environments_folder": "deploy/terraform/environments",
+  "environments": {
+    "fake-env": {
+      "tf_state_bucket": "some-fake-bucket",
+      "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate",
+      "tf_state_region": "eu-central-1"
+    }
+  },
+  "__prompts__": {
+    "image_name": "Enter the Docker image name",
+    "docker_context": "Enter the path for Docker build context",
+    "dockerfile_path": "Enter the path for the Dockerfile",
+    "environments_folder": "Enter the path for the environments folder"
+  },
+  "_jinja2_env_vars": {
+    "variable_start_string": "@{{",
+    "variable_end_string": "}}"
+  }
+}

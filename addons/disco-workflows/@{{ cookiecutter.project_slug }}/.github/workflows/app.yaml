@@ -1,0 +1,106 @@
+name: app
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "deploy/terraform/**"
+      - ".github/workflows/app.yaml"
+  push:
+    branches:
+      - master
+    paths:
+      - "deploy/terraform/**"
+      - ".github/workflows/app.yaml"
+
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  push_image:
+    name: Push ${{ matrix.environment }} image
+    strategy:
+      matrix:
+        include:
+          - environment: dev
+            aws-account-id: 269132892972
+          - environment: prod
+            aws-account-id: 883535314275
+    uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v2
+    with:
+      aws_region: eu-central-1
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/cicd-iac
+      image_name: "@{{ cookiecutter.image_name }}"
+      docker_context: "@{{ cookiecutter.docker_context }}"
+      dockerfile_path: "@{{ cookiecutter.dockerfile_path }}"
+
+  deploy_feature:
+    if: github.event_name == 'pull_request'
+    name: deploy feature branch
+    needs: [push_image]
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-feature.yaml@v2
+    with:
+      aws_region: eu-central-1
+      aws_oidc_role_arn: arn:aws:iam::269132892972:role/cicd-iac
+      tf_dir: deploy/terraform
+      tf_backend_config_files: deploy/terraform/environments/dev.s3.tfbackend
+      tf_workspace: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
+      tf_var_files: |
+        deploy/terraform/app.tfvars
+      tf_vars: |
+        branch="${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}"
+        image_tag="${{ github.sha }}"
+
+  plan_master:
+    if: github.event_name == 'pull_request'
+    name: Plan ${{ matrix.environment }}
+    needs: [push_image]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - environment: dev
+            aws-account-id: 269132892972
+          - environment: prod
+            aws-account-id: 883535314275
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v2
+    with:
+      aws_region: eu-central-1
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/cicd-iac
+      tf_dir: deploy/terraform
+      tf_backend_config_files: "@{{ cookiecutter.environments_folder }}/${{ matrix.environment }}.s3.tfbackend"
+      tf_var_files: "@{{ cookiecutter.environments_folder }}/${{ matrix.aws-account-id }}.tfvars"
+      tf_vars: |
+        branch="master"
+        image_tag="${{ github.sha }}"
+
+  apply_master:
+    if: github.ref_name == github.event.repository.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    name: Deploy ${{ matrix.environment }}
+    needs: [push_image]
+    concurrency:
+      group: ${{ matrix.environment }}
+      cancel-in-progress: false
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - environment: dev
+            aws-account-id: 269132892972
+          - environment: prod
+            aws-account-id: 883535314275
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v2
+    with:
+      aws_region: eu-central-1
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/cicd-iac
+      tf_dir: deploy/terraform
+      tf_backend_config_files: "@{{ cookiecutter.environments_folder }}/${{ matrix.environment }}.s3.tfbackend"
+      tf_var_files: "@{{ cookiecutter.environments_folder }}/${{ matrix.aws-account-id }}.tfvars"
+      tf_vars: |
+        branch="master"
+        image_tag="${{ github.sha }}"
