@@ -14,6 +14,11 @@
       "path": "./mkdocs",
       "title": "MKDocs",
       "description": "Cookiecutter template for MKDocs"
+    },
+    "disco-workflows": {
+      "path": "./disco-workflows",
+      "title": "DiscoWorkflows",
+      "description": "Cookiecutter template for Disco basic workflows"
     }
   }
 }
