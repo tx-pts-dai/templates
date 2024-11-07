@@ -1,6 +1,4 @@
 {
-  "project_name": "My Simple App",
-  "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
   "image_name": "@{{ cookiecutter.project_slug }}-image",
   "docker_context": "./@{{ cookiecutter.project_slug }}",
   "dockerfile_path": "@{{ cookiecutter.docker_context }}/Dockerfile",
