@@ -1,0 +1,121 @@
+name: app
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "deploy/terraform/**"
+      - ".github/workflows/app.yaml"
+  push:
+    branches:
+      - master
+    paths:
+      - "deploy/terraform/**"
+      - ".github/workflows/app.yaml"
+
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  push_image:
+    name: Push ${{ matrix.environment }} image
+    strategy:
+      matrix:
+        include:
+          {%- for env, values in cookiecutter.environments.items() %}
+          - environment: @{{ env }}
+          - aws-account-id: @{{ values.aws_account_id }}
+          - aws_region: @{{ values.tf_state_region }}
+          - aws_role_name: @{{ values.aws_role_name }}
+          {%- endfor %}
+    uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v2
+    with:
+      aws_region: ${{ matrix.aws_region }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
+      image_name: "@{{ cookiecutter.image_name }}"
+      docker_context: "@{{ cookiecutter.docker_context }}"
+      dockerfile_path: "@{{ cookiecutter.dockerfile_path }}"
+
+  deploy_feature:
+    if: github.event_name == 'pull_request'
+    name: deploy feature branch
+    needs: [push_image]
+    strategy:
+      matrix:
+        include:
+          - environment: dev
+          - aws-account-id: @{{ cookiecutter.environments.dev.aws_account_id }}
+          - aws_region: @{{ cookiecutter.environments.dev.tf_state_region }}
+          - aws_role_name: @{{ cookiecutter.environments.dev.aws_role_name }}
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-feature.yaml@v2
+    with:
+      aws_region: ${{ matrix.aws_region }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
+      tf_dir: deploy/application
+      tf_backend_config_files: "deploy/application/environments/${{ matrix.environment }}.s3.tfbackend"
+      tf_workspace: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
+      tf_var_files: "deploy/application/environments/${{ matrix.environment }}.tfvars"
+      tf_vars: |
+        branch="${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}"
+        image_tag="${{ github.sha }}"
+
+  plan_master:
+    if: github.event_name == 'pull_request'
+    name: Plan ${{ matrix.environment }}
+    needs: [push_image]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          {%- for env, values in cookiecutter.environments.items() %}
+          - environment: @{{ env }}
+          - aws-account-id: @{{ values.aws_account_id }}
+          - aws_region: @{{ values.tf_state_region }}
+          - aws_role_name: @{{ values.aws_role_name }}
+          {%- endfor %}
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v2
+    with:
+      aws_region: ${{ matrix.aws_region }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
+      tf_dir: deploy/application
+      tf_backend_config_files: "deploy/application/environments/${{ matrix.environment }}.s3.tfbackend"
+      tf_workspace: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
+      tf_var_files: "deploy/application/environments/${{ matrix.environment }}.tfvars"
+      tf_vars: |
+        branch="master"
+        image_tag="${{ github.sha }}"
+
+  apply_master:
+    if: github.ref_name == github.event.repository.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    name: Deploy ${{ matrix.environment }}
+    needs: [push_image]
+    concurrency:
+      group: ${{ matrix.environment }}
+      cancel-in-progress: false
+    strategy:
+      max-parallel: 1
+      matrix:
+        matrix:
+        include:
+          {%- for env, values in cookiecutter.environments.items() %}
+          - environment: @{{ env }}
+          - aws-account-id: @{{ values.aws_account_id }}
+          - aws_region: @{{ values.tf_state_region }}
+          - aws_role_name: @{{ values.aws_role_name }}
+          {%- endfor %}
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v2
+    with:
+      aws_region: ${{ matrix.aws_region }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
+      tf_dir: deploy/application
+      tf_backend_config_files: "deploy/applicationenvironments/${{ matrix.environment }}.s3.tfbackend"
+      tf_workspace: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
+      tf_var_files: "deploy/application/environments/${{ matrix.environment }}.tfvars"
+      tf_vars: |
+        branch="master"
+        image_tag="${{ github.sha }}"
