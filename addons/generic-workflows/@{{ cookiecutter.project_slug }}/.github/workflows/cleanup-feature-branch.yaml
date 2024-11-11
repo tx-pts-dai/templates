@@ -16,12 +16,16 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        matrix:
+        {%- if cookiecutter.github_environments %}
+        stack: [app]
+        environment: ['dev']
+        {%- else %}
         include:
           - environment: dev
           - aws-account-id: @{{ cookiecutter.environments.dev.aws_account_id }}
           - aws_region: @{{ cookiecutter.environments.dev.tf_state_region }}
           - aws_role_name: @{{ cookiecutter.environments.dev.aws_role_name }}
+        {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-cleanup.yaml@v2
     with:
       aws_region: ${{ matrix.aws_region }}

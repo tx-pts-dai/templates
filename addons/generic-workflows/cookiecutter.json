@@ -4,8 +4,16 @@
   "image_name": "disco-image",
   "docker_context": "./context",
   "dockerfile_path": "@{{ cookiecutter.docker_context }}/Dockerfile",
+  "github_environments": true,
   "environments": {
     "dev": {
+      "tf_state_bucket": "some-fake-bucket",
+      "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate",
+      "aws_role_name": "fake-role",
+      "tf_state_region": "eu-central-1",
+      "aws_account_id": "123456789012"
+    },
+    "sandbox": {
       "tf_state_bucket": "some-fake-bucket",
       "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate",
       "aws_role_name": "fake-role",
@@ -16,7 +24,8 @@
   "__prompts__": {
     "image_name": "Enter the Docker image name",
     "docker_context": "Enter the path for Docker build context",
-    "dockerfile_path": "Enter the path for the Dockerfile"
+    "dockerfile_path": "Enter the path for the Dockerfile",
+    "github_environments": "Define whether the WFs rely on GitHub environments or not."
   },
   "_jinja2_env_vars": {
     "variable_start_string": "@{{",
