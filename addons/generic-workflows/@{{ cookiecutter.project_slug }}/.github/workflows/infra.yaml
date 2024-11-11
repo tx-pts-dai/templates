@@ -1,17 +1,17 @@
-name: Infrastructure
+name: infra
 
 on:
   push:
     branches: [main]
     paths:
-      - "deploy/infrastructure/**"
-      - ".github/workflows/infrastructure.yaml"
+      - "deploy/infra/**"
+      - ".github/workflows/infra.yaml"
 
   pull_request:
     branches: [main]
     paths:
-      - "deploy/infrastructure/**"
-      - ".github/workflows/infrastructure.yaml"
+      - "deploy/infra/**"
+      - ".github/workflows/infra.yaml"
 
   workflow_dispatch:
 
@@ -44,9 +44,9 @@ jobs:
     with:
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
-      tf_dir: "deploy/infrastructure"
-      tf_backend_config_files: "deploy/infrastructure/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/infrastructure/${{ matrix.environment }}.tfvars"
+      tf_dir: "deploy/infra"
+      tf_backend_config_files: "deploy/infra/environments/${{ matrix.environment }}.s3.tfbackend"
+      tf_var_files: "deploy/infra/${{ matrix.environment }}.tfvars"
 
   apply:
     if: github.ref_name == github.event.repository.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
@@ -72,6 +72,6 @@ jobs:
     with:
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
-      tf_dir: deploy/infrastructure
-      tf_backend_config_files: "deploy/infrastructure/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/infrastructure/environments/${{ matrix.environment }}.tfvars"
+      tf_dir: deploy/infra
+      tf_backend_config_files: "deploy/infra/environments/${{ matrix.environment }}.s3.tfbackend"
+      tf_var_files: "deploy/infra/environments/${{ matrix.environment }}.tfvars"
