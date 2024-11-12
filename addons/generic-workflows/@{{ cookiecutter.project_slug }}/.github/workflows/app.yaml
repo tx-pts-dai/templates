@@ -49,7 +49,7 @@ jobs:
       dockerfile_path: "@{{ cookiecutter.dockerfile_path }}"
 
   deploy_feature:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' ||  github.event_name == 'workflow_dispatch'
     name: deploy feature branch
     needs: [push_image]
     strategy:
@@ -107,7 +107,6 @@ jobs:
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/app
       tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_workspace: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
       tf_var_files: "deploy/app/environments/${{ matrix.environment }}.tfvars"
       tf_vars: |
         branch="master"
@@ -143,7 +142,6 @@ jobs:
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/app
       tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_workspace: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
       tf_var_files: "deploy/app/environments/${{ matrix.environment }}.tfvars"
       tf_vars: |
         branch="master"
