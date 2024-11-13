@@ -43,11 +43,12 @@ jobs:
     uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v2
     with:
       aws_region: ${{ matrix.aws_region }}
-      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       image_name: "@{{ cookiecutter.image_name }}"
       docker_context: "@{{ cookiecutter.docker_context }}"
       dockerfile_path: "@{{ cookiecutter.dockerfile_path }}"
 
+  {%- if cookiecutter.feature %}
   deploy_feature:
     if: github.event_name == 'pull_request'
     name: deploy feature branch
@@ -71,7 +72,7 @@ jobs:
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-feature.yaml@v2
     with:
       aws_region: ${{ matrix.aws_region }}
-      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/app
       tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
       tf_workspace: ${{ github.head_ref }}
@@ -79,6 +80,7 @@ jobs:
       tf_vars: |
         branch="${{ github.head_ref }}"
         image_tag="${{ github.sha }}"
+  {%- endif %}
 
   plan_master:
     if: github.event_name == 'pull_request'
@@ -104,7 +106,7 @@ jobs:
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v2
     with:
       aws_region: ${{ matrix.aws_region }}
-      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/app
       tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
       tf_var_files: "deploy/app/environments/${{ matrix.environment }}.tfvars"
@@ -139,7 +141,7 @@ jobs:
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v2
     with:
       aws_region: ${{ matrix.aws_region }}
-      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/app
       tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
       tf_var_files: "deploy/app/environments/${{ matrix.environment }}.tfvars"

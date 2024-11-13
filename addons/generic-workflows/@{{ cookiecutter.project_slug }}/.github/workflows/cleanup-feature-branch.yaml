@@ -22,14 +22,14 @@ jobs:
         {%- else %}
         include:
           - environment: dev
-          - aws-account-id: @{{ cookiecutter.environments.dev.aws_account_id }}
+          - aws_account_id: @{{ cookiecutter.environments.dev.aws_account_id }}
           - aws_region: @{{ cookiecutter.environments.dev.tf_state_region }}
           - aws_role_name: @{{ cookiecutter.environments.dev.aws_role_name }}
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-cleanup.yaml@v2
     with:
       aws_region: ${{ matrix.aws_region }}
-      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws-account-id }}:role/${{ matrix.aws_role_name }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/application
       tf_backend_config_files: "deploy/applicationenvironments/${{ matrix.environment }}.s3.tfbackend"
       tf_var_files: "deploy/application/environments/${{ matrix.environment }}.tfvars"

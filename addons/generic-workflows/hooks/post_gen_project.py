@@ -34,9 +34,6 @@ for template_name in env.list_templates():
 
     for environment_name, environment_data in environments.items():
 
-        # Skip 'sandbox' environment
-        if environment_name == 'sandbox':
-            continue
 
         rendered_content = template.render(
             environment=environment_name,
