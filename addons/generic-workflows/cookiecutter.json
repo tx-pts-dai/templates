@@ -6,22 +6,8 @@
   "dockerfile_path": "@{{ cookiecutter.docker_context }}/Dockerfile",
   "github_environments": true,
   "feature": true,
-  "environments": {
-    "dev": {
-      "tf_state_bucket": "some-fake-bucket",
-      "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate",
-      "aws_role_name": "fake-role",
-      "tf_state_region": "eu-central-1",
-      "aws_account_id": "123456789012"
-    },
-    "sandbox": {
-      "tf_state_bucket": "some-fake-bucket",
-      "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate",
-      "aws_role_name": "fake-role",
-      "tf_state_region": "eu-central-1",
-      "aws_account_id": "123456789012"
-    }
-  },
+  "github_repo": "",
+  "environments": {},
   "__prompts__": {
     "image_name": "Enter the Docker image name",
     "docker_context": "Enter the path for Docker build context",
