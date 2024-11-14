@@ -1,16 +1,17 @@
-name: app
+name: Application
 
 on:
   pull_request:
-    branches:
-      - master
+    branches: [main]
     paths:
+      - "app/**"
       - "deploy/app/**"
       - ".github/workflows/app.yaml"
   push:
     branches:
-      - master
+      branches: [main]
     paths:
+      - "app/**"
       - "deploy/app/**"
       - ".github/workflows/app.yaml"
 
@@ -22,13 +23,17 @@ permissions:
   pull-requests: write
 
 jobs:
-  push_image:
+  build_push:
     name: Build and push ${{ matrix.environment }} image
     strategy:
+      fail-fast: true
       matrix:
         {%- if cookiecutter.github_environments %}
-        stack: [app]
-        environment: ['dev', 'prod']
+        stack: [infra]
+        environment:
+          {%- for env in cookiecutter.environments %}
+          - @{{ env }}
+          {%- endfor %}
         {%- else %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
@@ -42,22 +47,29 @@ jobs:
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v2
     with:
-      aws_region: ${{ matrix.aws_region }}
-      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
-      image_name: "@{{ cookiecutter.image_name }}"
       docker_context: "@{{ cookiecutter.docker_context }}"
       dockerfile_path: "@{{ cookiecutter.dockerfile_path }}"
+      image_name: "@{{ cookiecutter.image_name }}"
+      {%- if cookiecutter.github_environments %}
+      environment: ${{ matrix.stack }}-${{ matrix.environment }}
+      {%- else %}
+      aws_region: ${{ matrix.aws_region }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
+      {%- endif %}
 
   {%- if cookiecutter.feature %}
   deploy_feature:
     if: github.event_name == 'pull_request'
-    name: deploy feature branch
+    name: Deploy feature branch
     needs: [push_image]
     strategy:
       matrix:
         {%- if cookiecutter.github_environments %}
         stack: [app]
-        environment: ['dev', 'prod']
+        environment:
+          {%- for env in cookiecutter.environments %}
+          - @{{ env }}
+          {%- endfor %}
         {%- else %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
@@ -71,27 +83,33 @@ jobs:
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-feature.yaml@v2
     with:
+      tf_vars: |
+        branch="${{ github.head_ref }}"
+        image_tag="${{ github.sha }}"
+      tf_workspace: ${{ github.head_ref }}
+      {%- if cookiecutter.github_environments %}
+      environment: ${{ matrix.stack }}-${{ matrix.environment }}
+      {%- else %}
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/app
       tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_workspace: ${{ github.head_ref }}
-      tf_var_files: "deploy/app/environments/${{ matrix.environment }}.tfvars"
-      tf_vars: |
-        branch="${{ github.head_ref }}"
-        image_tag="${{ github.sha }}"
+      {%- endif %}
   {%- endif %}
 
   plan_master:
     if: github.event_name == 'pull_request'
     name: Plan ${{ matrix.environment }}
-    needs: [push_image]
+    needs: [build_push]
     strategy:
       fail-fast: false
-      matrix:
+     matrix:
         {%- if cookiecutter.github_environments %}
         stack: [app]
-        environment: ['dev', 'prod']
+        environment:
+          {%- for env in cookiecutter.environments %}
+          - @{{ env }}
+          {%- endfor %}
         {%- else %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
@@ -105,28 +123,31 @@ jobs:
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v2
     with:
+      tf_vars: |
+        image_tag="${{ github.sha }}"
+      {%- if cookiecutter.github_environments %}
+      environment: ${{ matrix.stack }}-${{ matrix.environment }}
+      {%- else %}
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/app
       tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/app/environments/${{ matrix.environment }}.tfvars"
-      tf_vars: |
-        branch="master"
-        image_tag="${{ github.sha }}"
+      {%- endif %}
 
   apply_master:
     if: github.ref_name == github.event.repository.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     name: Deploy ${{ matrix.environment }}
-    needs: [push_image]
-    concurrency:
-      group: ${{ matrix.environment }}
-      cancel-in-progress: false
+    needs: [build_push]
     strategy:
+      fail-fast: true
       max-parallel: 1
       matrix:
         {%- if cookiecutter.github_environments %}
         stack: [app]
-        environment: ['dev', 'prod']
+        environment:
+          {%- for env in cookiecutter.environments %}
+          - @{{ env }}
+          {%- endfor %}
         {%- else %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
@@ -140,11 +161,13 @@ jobs:
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v2
     with:
+      tf_vars: |
+        image_tag="${{ github.sha }}"
+      {%- if cookiecutter.github_environments %}
+      environment: ${{ matrix.stack }}-${{ matrix.environment }}
+      {%- else %}
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/app
       tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/app/environments/${{ matrix.environment }}.tfvars"
-      tf_vars: |
-        branch="master"
-        image_tag="${{ github.sha }}"
+      {%- endif %}

@@ -1,4 +1,4 @@
-name: infra
+name: Infrastructure
 
 on:
   push:
@@ -28,7 +28,10 @@ jobs:
       matrix:
         {%- if cookiecutter.github_environments %}
         stack: [infra]
-        environment: ['dev', 'prod']
+        environment:
+          {%- for env in cookiecutter.environments %}
+          - @{{ env }}
+          {%- endfor %}
         {%- else %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
@@ -42,11 +45,16 @@ jobs:
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v1
     with:
+      {%- if cookiecutter.github_environments %}
+      environment: ${{ matrix.stack }}-${{ matrix.environment }}
+      {%- else %}
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: "deploy/infra"
       tf_backend_config_files: "deploy/infra/environments/${{ matrix.environment }}.s3.tfbackend"
       tf_var_files: "deploy/infra/${{ matrix.environment }}.tfvars"
+      {%- endif %}
+
 
   apply:
     if: github.ref_name == github.event.repository.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
@@ -56,7 +64,10 @@ jobs:
       matrix:
         {%- if cookiecutter.github_environments %}
         stack: [infra]
-        environment: ['dev', 'prod']
+        environment:
+          {%- for env in cookiecutter.environments %}
+          - @{{ env }}
+          {%- endfor %}
         {%- else %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
@@ -70,8 +81,12 @@ jobs:
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v1
     with:
+      {%- if cookiecutter.github_environments %}
+      environment: ${{ matrix.stack }}-${{ matrix.environment }}
+      {%- else %}
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
-      tf_dir: deploy/infra
+      tf_dir: "deploy/infra"
       tf_backend_config_files: "deploy/infra/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/infra/environments/${{ matrix.environment }}.tfvars"
+      tf_var_files: "deploy/infra/${{ matrix.environment }}.tfvars"
+      {%- endif %}
