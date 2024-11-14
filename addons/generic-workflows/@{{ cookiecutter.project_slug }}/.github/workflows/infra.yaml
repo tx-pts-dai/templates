@@ -35,12 +35,10 @@ jobs:
         {%- else %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
-        {%- if env != 'sandbox' %}
           - environment: @{{ env }}
           - aws_account_id: @{{ values.aws_account_id }}
           - aws_region: @{{ values.tf_state_region }}
           - aws_role_name: @{{ values.aws_role_name }}
-        {%- endif %}
         {%- endfor %}
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v1
@@ -71,12 +69,10 @@ jobs:
         {%- else %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
-        {%- if env != 'sandbox' %}
           - environment: @{{ env }}
           - aws_account_id: @{{ values.aws_account_id }}
           - aws_region: @{{ values.tf_state_region }}
           - aws_role_name: @{{ values.aws_role_name }}
-        {%- endif %}
         {%- endfor %}
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v1
