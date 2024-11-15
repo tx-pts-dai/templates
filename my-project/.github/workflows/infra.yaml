@@ -1,0 +1,46 @@
+name: Infrastructure
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "deploy/infra/**"
+      - ".github/workflows/infra.yaml"
+
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "deploy/infra/**"
+      - ".github/workflows/infra.yaml"
+
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  plan:
+    if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        stack: [infra]
+        environment:
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v1
+    with:
+      environment: ${{ matrix.stack }}-${{ matrix.environment }}
+
+
+  apply:
+    if: github.ref_name == github.event.repository.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        stack: [infra]
+        environment:
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v1
+    with:
+      environment: ${{ matrix.stack }}-${{ matrix.environment }}

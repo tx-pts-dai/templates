@@ -26,3 +26,4 @@ jobs:
           cookiecutter --no-input --directory addons/mkdocs .
           cookiecutter --no-input --directory addons/flux-cronjob-deployment .
           cookiecutter --no-input --directory addons/flux-service-deployment .
+          cookiecutter --no-input --directory addons/github-workflows .
