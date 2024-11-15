@@ -2,13 +2,13 @@ name: Infrastructure
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     paths:
       - "deploy/infra/**"
       - ".github/workflows/infra.yaml"
 
   pull_request:
-    branches: [main]
+    branches: [main, master]
     paths:
       - "deploy/infra/**"
       - ".github/workflows/infra.yaml"
@@ -26,19 +26,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        {%- if cookiecutter.github_environments %}
         stack: [infra]
         environment:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
-        {%- else %}
+          {%- if not cookiecutter.github_environments %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
           - environment: @{{ env }}
-          - aws_account_id: @{{ values.aws_account_id }}
-          - aws_region: @{{ values.tf_state_region }}
-          - aws_role_name: @{{ values.aws_role_name }}
+            aws_account_id: @{{ values.aws_account_id }}
+            aws_region: @{{ values.tf_state_region }}
+            aws_role_name: @{{ values.aws_role_name }}
         {%- endfor %}
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v1
@@ -60,19 +59,18 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        {%- if cookiecutter.github_environments %}
         stack: [infra]
         environment:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
-        {%- else %}
+          {%- if not cookiecutter.github_environments %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
           - environment: @{{ env }}
-          - aws_account_id: @{{ values.aws_account_id }}
-          - aws_region: @{{ values.tf_state_region }}
-          - aws_role_name: @{{ values.aws_role_name }}
+            aws_account_id: @{{ values.aws_account_id }}
+            aws_region: @{{ values.tf_state_region }}
+            aws_role_name: @{{ values.aws_role_name }}
         {%- endfor %}
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v1

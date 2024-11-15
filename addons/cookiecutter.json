@@ -15,10 +15,10 @@
       "title": "MKDocs",
       "description": "Cookiecutter template for MKDocs"
     },
-    "generic-workflows": {
-      "path": "./generic-workflows",
-      "title": "GenericWorkflows",
-      "description": "Cookiecutter template for generic workflows"
+    "github-workflows": {
+      "path": "./github-workflows",
+      "title": "GithubWorkflows",
+      "description": "Cookiecutter template for github workflows"
     }
   }
 }

@@ -9,6 +9,7 @@
   "github_repo": "",
   "environments": {},
   "__prompts__": {
+    "project_name": "Enter the project name",
     "image_name": "Enter the Docker image name",
     "docker_context": "Enter the path for Docker build context",
     "dockerfile_path": "Enter the path for the Dockerfile",

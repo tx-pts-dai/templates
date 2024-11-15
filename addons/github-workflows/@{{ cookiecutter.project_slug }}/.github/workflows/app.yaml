@@ -2,14 +2,14 @@ name: Application
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, master]
     paths:
       - "app/**"
       - "deploy/app/**"
       - ".github/workflows/app.yaml"
   push:
     branches:
-      branches: [main]
+      branches: [main, master]
     paths:
       - "app/**"
       - "deploy/app/**"
@@ -28,19 +28,18 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        {%- if cookiecutter.github_environments %}
         stack: [infra]
         environment:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
-        {%- else %}
+          {%- if not cookiecutter.github_environments %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
           - environment: @{{ env }}
-          - aws_account_id: @{{ values.aws_account_id }}
-          - aws_region: @{{ values.tf_state_region }}
-          - aws_role_name: @{{ values.aws_role_name }}
+            aws_account_id: @{{ values.aws_account_id }}
+            aws_region: @{{ values.tf_state_region }}
+            aws_role_name: @{{ values.aws_role_name }}
         {%- endfor %}
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v2
@@ -62,19 +61,18 @@ jobs:
     needs: [push_image]
     strategy:
       matrix:
-        {%- if cookiecutter.github_environments %}
-        stack: [app]
+        stack: [infra]
         environment:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
-        {%- else %}
+          {%- if not cookiecutter.github_environments %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
           - environment: @{{ env }}
-          - aws_account_id: @{{ values.aws_account_id }}
-          - aws_region: @{{ values.tf_state_region }}
-          - aws_role_name: @{{ values.aws_role_name }}
+            aws_account_id: @{{ values.aws_account_id }}
+            aws_region: @{{ values.tf_state_region }}
+            aws_role_name: @{{ values.aws_role_name }}
         {%- endfor %}
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-feature.yaml@v2
@@ -93,26 +91,25 @@ jobs:
       {%- endif %}
   {%- endif %}
 
-  plan_master:
+  plan:
     if: github.event_name == 'pull_request'
     name: Plan ${{ matrix.environment }}
     needs: [build_push]
     strategy:
       fail-fast: false
-     matrix:
-        {%- if cookiecutter.github_environments %}
-        stack: [app]
+      matrix:
+        stack: [infra]
         environment:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
-        {%- else %}
+          {%- if not cookiecutter.github_environments %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
           - environment: @{{ env }}
-          - aws_account_id: @{{ values.aws_account_id }}
-          - aws_region: @{{ values.tf_state_region }}
-          - aws_role_name: @{{ values.aws_role_name }}
+            aws_account_id: @{{ values.aws_account_id }}
+            aws_region: @{{ values.tf_state_region }}
+            aws_role_name: @{{ values.aws_role_name }}
         {%- endfor %}
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v2
@@ -128,7 +125,7 @@ jobs:
       tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
       {%- endif %}
 
-  apply_master:
+  apply:
     if: github.ref_name == github.event.repository.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     name: Deploy ${{ matrix.environment }}
     needs: [build_push]
@@ -136,19 +133,18 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        {%- if cookiecutter.github_environments %}
-        stack: [app]
+        stack: [infra]
         environment:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
-        {%- else %}
+          {%- if not cookiecutter.github_environments %}
         include:
         {%- for env, values in cookiecutter.environments.items() %}
           - environment: @{{ env }}
-          - aws_account_id: @{{ values.aws_account_id }}
-          - aws_region: @{{ values.tf_state_region }}
-          - aws_role_name: @{{ values.aws_role_name }}
+            aws_account_id: @{{ values.aws_account_id }}
+            aws_region: @{{ values.tf_state_region }}
+            aws_role_name: @{{ values.aws_role_name }}
         {%- endfor %}
         {%- endif %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v2
