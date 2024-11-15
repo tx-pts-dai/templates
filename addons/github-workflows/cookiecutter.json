@@ -7,7 +7,22 @@
   "github_environments": true,
   "feature": true,
   "github_repo": "",
-  "environments": {},
+  "environments": {
+    "fake-env": {
+      "tf_state_bucket": "some-fake-bucket",
+      "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate",
+      "tf_state_region": "eu-central-1",
+      "aws_account_id": "123456789012",
+      "aws_role_name": "fake-role"
+    },
+    "dev": {
+      "tf_state_bucket": "some-fake-bucket2",
+      "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate2",
+      "tf_state_region": "eu-central-12",
+      "aws_account_id": "1234567890122",
+      "aws_role_name": "fake-role2"
+    }
+  },
   "__prompts__": {
     "project_name": "Enter the project name",
     "image_name": "Enter the Docker image name",
