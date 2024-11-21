@@ -4,16 +4,16 @@ on:
   push:
     branches: [main]
     paths:
-      - "application/**"
-      - "deploy/application/**"
-      - ".github/workflows/application.yaml"
+      - "app/**"
+      - "deploy/app/**"
+      - ".github/workflows/app.yaml"
 
   pull_request:
     branches: [main]
     paths:
-      - "application/**"
-      - "deploy/application/**"
-      - ".github/workflows/application.yaml"
+      - "app/**"
+      - "deploy/app/**"
+      - ".github/workflows/app.yaml"
 
   workflow_dispatch:
 
@@ -35,11 +35,11 @@ jobs:
     uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v1
     with:
       environment: ${{ matrix.stack }}-${{ matrix.environment }}
-      docker_context: application
+      docker_context: app
 
   plan:
     if: github.event_name == 'pull_request'
-    needs: build_push
+    needs: [build_push]
     strategy:
       fail-fast: false
       matrix:
@@ -56,7 +56,7 @@ jobs:
 
   apply:
     if: github.ref_name == github.event.repository.default_branch && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    needs: build_push
+    needs: [build_push]
     strategy:
       fail-fast: true
       max-parallel: 1

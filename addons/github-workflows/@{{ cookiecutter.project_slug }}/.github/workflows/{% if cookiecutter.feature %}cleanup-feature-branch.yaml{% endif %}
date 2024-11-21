@@ -1,0 +1,43 @@
+name: Cleanup Feature Branch
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  destroy_feature:
+    name: Destroy Feature Branch
+    strategy:
+      max-parallel: 1
+      matrix:
+        stack: [app]
+        {%- if cookiecutter.github_environments %}
+        environment: ['dev']
+        {%- else%}
+        include:
+          - environment: dev
+            aws_account_id: @{{ cookiecutter.environments.dev.aws_account_id }}
+            aws_region: @{{ cookiecutter.environments.dev.tf_state_region }}
+            aws_role_name: @{{ cookiecutter.environments.dev.aws_role_name }}
+        {%- endif %}
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-cleanup.yaml@v2
+    with:
+      tf_workspace: ${{ github.head_ref || github.ref  }}
+      tf_vars: |
+        image_tag="not_needed_for_destroy"
+        branch="${{ github.head_ref || github.ref }}"
+      {%- if cookiecutter.github_environments %}
+      environment: ${{ matrix.stack }}-${{ matrix.environment }}
+      {%- else %}
+      aws_region: ${{ matrix.aws_region }}
+      aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
+      tf_dir: deploy/app
+      tf_var_files: "deploy/app/environments/${{ matrix.environment }}.tfvars"
+      tf_backend_config_files: "deploy/app/environments/${{ matrix.environment }}.s3.tfbackend"
+      {%- endif %}

@@ -1,0 +1,23 @@
+{
+  "project_name": "My Project",
+  "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "image_name": "",
+  "docker_context": ".",
+  "dockerfile_path": "@{{ cookiecutter.docker_context }}/Dockerfile",
+  "github_environments": true,
+  "feature": true,
+  "github_repo": "",
+  "environments": {},
+  "__prompts__": {
+    "project_name": "Enter the project name",
+    "image_name": "Enter the Docker image name",
+    "docker_context": "Enter the path for Docker build context",
+    "dockerfile_path": "Enter the path for the Dockerfile",
+    "github_environments": "Define whether the WFs rely on GitHub environments or not.",
+    "feature": "Defines whether the feature branch option is available."
+  },
+  "_jinja2_env_vars": {
+    "variable_start_string": "@{{",
+    "variable_end_string": "}}"
+  }
+}
