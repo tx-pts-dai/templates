@@ -1,0 +1,12 @@
+{
+    "lambda_name": "sample",
+    "description": "What is the lambda doing",
+    "__prompts__": {
+        "lambda_name": "The name of the lambda (ex: studio-archive-trigger)",
+        "description": "One line description of what the lambda is doing"
+    },
+    "_jinja2_env_vars": {
+        "variable_start_string": "@{{",
+        "variable_end_string": "}}"
+    }
+}
