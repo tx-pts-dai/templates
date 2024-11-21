@@ -1,20 +1,26 @@
 locals {
   # Additional policies to attach to the lambda
   lambda_@{{ cookiecutter.lambda_name }}_policies = [
+    {% if cookiecutter.is_triggered_by_sqs == "true" -%}
     "arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole", # Needed to allow Lambda manage sqs, see https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html#events-sqs-permissions
+    {% endif %}
   ]
 }
 
 variable "@{{ cookiecutter.lambda_name }}" {
   description = "Configuration of the @{{ cookiecutter.lambda_name }} workflow"
   type = object({
+    {% if cookiecutter.is_triggered_by_sqs == "true" -%}
     sqs_batch_size                        = number
+    {% endif -%}
     cloudwatch_logs_retention_in_days     = number
     lambda_reserved_concurrent_executions = number
     lambda_timeout                        = number
   })
   default = {
+    {% if cookiecutter.is_triggered_by_sqs == "true" -%}
     sqs_batch_size                        = 10
+    {% endif -%}
     cloudwatch_logs_retention_in_days     = 7
     lambda_reserved_concurrent_executions = 2
     lambda_timeout                        = 60
@@ -32,7 +38,7 @@ module "@{{ cookiecutter.lambda_name }}" {
   runtime                = "nodejs20.x"
   timeout                = var.@{{ cookiecutter.lambda_name }}.lambda_timeout
   memory_size            = 256
-  layers                 = [aws_lambda_layer_version.common_lib.arn]
+  # layers                 = [aws_lambda_layer_version.common_lib.arn]
   vpc_subnet_ids         = data.aws_subnets.private_subnets.ids
   vpc_security_group_ids = [aws_security_group.vpc_lambda.id]
   attach_network_policy  = true
@@ -45,13 +51,24 @@ module "@{{ cookiecutter.lambda_name }}" {
 
   reserved_concurrent_executions = var.@{{ cookiecutter.lambda_name }}.lambda_reserved_concurrent_executions
 
+  {% if cookiecutter.is_triggered_by_sqs == "true" or cookiecutter.schedule_expression != "null" -%}
   allowed_triggers = {
+    {% if cookiecutter.is_triggered_by_sqs == "true" -%}
     SQSQueue = {
       principal  = "sqs.amazonaws.com"
       source_arn = module.@{{ cookiecutter.lambda_name }}_queue.queue_arn
     }
+    {% endif -%}
+    {% if cookiecutter.schedule_expression != "null" -%}
+     Cron = {
+      principal  = "events.amazonaws.com"
+      source_arn = aws_cloudwatch_event_rule.@{{ cookiecutter.lambda_name }}.arn
+    }
+    {% endif -%}
   }
+  {% endif -%}
 
+  {% if cookiecutter.is_triggered_by_sqs == "true" -%}
   event_source_mapping = {
     sqs_queue = {
       maximum_batching_window_in_seconds = 5
@@ -64,6 +81,7 @@ module "@{{ cookiecutter.lambda_name }}" {
       }
     }
   }
+  {% endif -%}
 
   attach_policies    = length(local.lambda_@{{ cookiecutter.lambda_name }}_policies) > 0
   number_of_policies = length(local.lambda_@{{ cookiecutter.lambda_name }}_policies)
@@ -73,6 +91,20 @@ module "@{{ cookiecutter.lambda_name }}" {
   policy_json        = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}_permissions.json
 }
 
+{% if cookiecutter.schedule_expression != "null" %}
+resource "aws_cloudwatch_event_rule" "@{{ cookiecutter.lambda_name }}" {
+  name                = "${var.environment}-@{{ cookiecutter.lambda_name }}"
+  description         = "@{{ cookiecutter.lambda_name }} cronjob"
+  schedule_expression = "@{{ cookiecutter.schedule_expression}}"
+}
+
+resource "aws_cloudwatch_event_target" "@{{ cookiecutter.lambda_name }}" {
+  arn  = module.@{{ cookiecutter.lambda_name }}.lambda_function_arn
+  rule  = aws_cloudwatch_event_rule.@{{ cookiecutter.lambda_name }}.id
+}
+{% endif -%}
+
+{%- if cookiecutter.is_triggered_by_sqs == "true" %}
 module "@{{ cookiecutter.lambda_name }}_queue" {
   source  = "terraform-aws-modules/sqs/aws"
   version = "~> 4.2"
@@ -86,36 +118,37 @@ module "@{{ cookiecutter.lambda_name }}_queue" {
     maxReceiveCount = 2
   }
 
-  create_queue_policy = true
-  queue_policy_statements = {
-    sns = {
-      sid     = "SNSPublish"
-      actions = ["sqs:SendMessage"]
+  # create_queue_policy = true
+  # queue_policy_statements = {
+  #   sns = {
+  #     sid     = "SNSPublish"
+  #     actions = ["sqs:SendMessage"]
 
-      principals = [
-        {
-          type        = "Service"
-          identifiers = ["sns.amazonaws.com"]
-        }
-      ]
+  #     principals = [
+  #       {
+  #         type        = "Service"
+  #         identifiers = ["sns.amazonaws.com"]
+  #       }
+  #     ]
 
-      conditions = [{
-        test     = "ArnEquals"
-        variable = "aws:SourceArn"
-        values   = [aws_sns_topic.webhook.arn]
-      }]
-    }
-  }
+  #     conditions = [{
+  #       test     = "ArnEquals"
+  #       variable = "aws:SourceArn"
+  #       values   = [aws_sns_topic.webhook.arn]
+  #     }]
+  #   }
+  # }
 }
 
-resource "aws_sns_topic_subscription" "@{{ cookiecutter.lambda_name }}" {
-  filter_policy = templatefile("${path.root}/templates/sns_subscription.json.tpl", {
-    webhook = "archive"
-  })
-  topic_arn = aws_sns_topic.webhook.arn
-  protocol  = "sqs"
-  endpoint  = module.@{{ cookiecutter.lambda_name }}_queue.queue_arn
-}
+# resource "aws_sns_topic_subscription" "@{{ cookiecutter.lambda_name }}" {
+#   filter_policy = templatefile("${path.root}/templates/sns_subscription.json.tpl", {
+#     webhook = "archive"
+#   })
+#   topic_arn = aws_sns_topic.webhook.arn
+#   protocol  = "sqs"
+#   endpoint  = module.@{{ cookiecutter.lambda_name }}_queue.queue_arn
+# }
+{% endif -%}
 
 # Extra permissions needed by the lambda
 data "aws_iam_policy_document" "@{{ cookiecutter.lambda_name }}_permissions" {
