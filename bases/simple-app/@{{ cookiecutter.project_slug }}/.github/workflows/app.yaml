@@ -32,7 +32,7 @@ jobs:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
-    uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v1
+    uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v2
     with:
       environment: ${{ matrix.stack }}-${{ matrix.environment }}
       docker_context: app
@@ -48,7 +48,7 @@ jobs:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
-    uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v1
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v2
     with:
       environment: ${{ matrix.stack }}-${{ matrix.environment }}
       tf_vars: |
@@ -66,7 +66,7 @@ jobs:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
-    uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v1
+    uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v2
     with:
       environment: ${{ matrix.stack }}-${{ matrix.environment }}
       tf_vars: |
