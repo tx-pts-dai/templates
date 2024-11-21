@@ -4,14 +4,14 @@ on:
   push:
     branches: [main]
     paths:
-      - "deploy/infrastructure/**"
-      - ".github/workflows/infrastructure.yaml"
+      - "deploy/infra/**"
+      - ".github/workflows/infra.yaml"
 
   pull_request:
     branches: [main]
     paths:
-      - "deploy/infrastructure/**"
-      - ".github/workflows/infrastructure.yaml"
+      - "deploy/infra/**"
+      - ".github/workflows/infra.yaml"
 
   workflow_dispatch:
 

@@ -21,8 +21,9 @@ jobs:
 
       - name: Run tests
         run: |
-          cookiecutter --no-input --directory bases/simple-app .
-          cookiecutter --no-input --directory bases/sfmc-app .
-          cookiecutter --no-input --directory addons/mkdocs .
-          cookiecutter --no-input --directory addons/flux-cronjob-deployment .
-          cookiecutter --no-input --directory addons/flux-service-deployment .
+          cookiecutter --no-input --directory bases/simple-app  --output-dir test/simple-app .
+          cookiecutter --no-input --directory bases/sfmc-app --output-dir test/sfmc-app .
+          cookiecutter --no-input --directory addons/mkdocs --output-dir test/mkdocs .
+          cookiecutter --no-input --directory addons/flux-cronjob-deployment --output-dir test/flux-cronjob-deployment .
+          cookiecutter --no-input --directory addons/flux-service-deployment --output-dir test/flux-service-deployment .
+          cookiecutter --no-input --directory addons/github-workflows --output-dir test/github-workflows .
