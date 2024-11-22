@@ -51,7 +51,7 @@ module "@{{ cookiecutter.lambda_name }}" {
 
   reserved_concurrent_executions = var.@{{ cookiecutter.lambda_name }}.lambda_reserved_concurrent_executions
 
-  {% if cookiecutter.is_triggered_by_sqs == "true" or cookiecutter.schedule_expression != "null" -%}
+  {% if cookiecutter.is_triggered_by_sqs == "true" or cookiecutter.is_triggered_by_scheduler == "true" or cookiecutter.is_triggered_by_eventbridge == "true" -%}
   allowed_triggers = {
     {% if cookiecutter.is_triggered_by_sqs == "true" -%}
     SQSQueue = {
@@ -59,7 +59,7 @@ module "@{{ cookiecutter.lambda_name }}" {
       source_arn = module.@{{ cookiecutter.lambda_name }}_queue.queue_arn
     }
     {% endif -%}
-    {% if cookiecutter.schedule_expression != "null" -%}
+    {% if cookiecutter.is_triggered_by_eventbridge == "true" -%}
      Cron = {
       principal  = "events.amazonaws.com"
       source_arn = aws_cloudwatch_event_rule.@{{ cookiecutter.lambda_name }}.arn
@@ -91,16 +91,71 @@ module "@{{ cookiecutter.lambda_name }}" {
   policy_json        = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}_permissions.json
 }
 
-{% if cookiecutter.schedule_expression != "null" %}
+{% if cookiecutter.is_triggered_by_eventbridge == "true" %}
 resource "aws_cloudwatch_event_rule" "@{{ cookiecutter.lambda_name }}" {
   name                = "${var.environment}-@{{ cookiecutter.lambda_name }}"
   description         = "@{{ cookiecutter.lambda_name }} cronjob"
-  schedule_expression = "@{{ cookiecutter.schedule_expression}}"
+  schedule_expression = "@{{ cookiecutter.schedule_expression }}"
 }
 
 resource "aws_cloudwatch_event_target" "@{{ cookiecutter.lambda_name }}" {
   arn  = module.@{{ cookiecutter.lambda_name }}.lambda_function_arn
   rule  = aws_cloudwatch_event_rule.@{{ cookiecutter.lambda_name }}.id
+}
+{% endif %}
+
+{% if cookiecutter.is_triggered_by_scheduler == "true" %}
+resource "aws_scheduler_schedule" "@{{ cookiecutter.lambda_name }}" {
+  name                         = "${var.environment}-@{{ cookiecutter.lambda_name }}"
+  description                  = "Schedule for @{{ cookiecutter.lambda_name }} lambda"
+  schedule_expression          = "@{{ cookiecutter.schedule_expression }}"
+  schedule_expression_timezone = "@{{ cookiecutter.schedule_timezone }}"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+  target {
+    arn      = module.@{{ cookiecutter.lambda_name }}.lambda_function_arn
+    role_arn = aws_iam_role.@{{ cookiecutter.lambda_name }}.arn
+  }
+}
+
+data "aws_iam_policy_document" "@{{ cookiecutter.lambda_name }}_assume_role" {
+  version = "2012-10-17"
+  statement {
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["scheduler.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "@{{ cookiecutter.lambda_name }}" {
+  version = "2012-10-17"
+  statement {
+    actions   = ["lambda:InvokeFunction"]
+    effect    = "Allow"
+    resources = [module.@{{ cookiecutter.lambda_name }}.lambda_function_arn]
+  }
+}
+
+resource "aws_iam_policy" "@{{ cookiecutter.lambda_name }}" {
+  name        = "${var.environment}-@{{ cookiecutter.lambda_name }}"
+  description = "Allow AWS Scheduler to invoke @{{ cookiecutter.lambda_name }} lambda"
+  policy      = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}.json
+}
+
+resource "aws_iam_role" "@{{ cookiecutter.lambda_name }}" {
+  name               = "${var.environment}-@{{ cookiecutter.lambda_name }}"
+  description        = "Allow AWS Scheduler to invoke @{{ cookiecutter.lambda_name }} lambda"
+  assume_role_policy = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}.json
+}
+
+resource "aws_iam_role_policy_attachment" "@{{ cookiecutter.lambda_name }}" {
+  role       = aws_iam_role.@{{ cookiecutter.lambda_name }}.name
+  policy_arn = module.@{{ cookiecutter.lambda_name }}.lambda_function_arn
 }
 {% endif -%}
 
