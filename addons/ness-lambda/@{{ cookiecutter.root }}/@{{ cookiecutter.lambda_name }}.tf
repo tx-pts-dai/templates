@@ -45,7 +45,7 @@ module "@{{ cookiecutter.lambda_underscore }}" {
   environment_variables = {
     ENVIRONMENT  = var.environment
     SECRET       = var.studio_secret
-    {% if cookiecutter.is_writting_to_sqs == "true" %-}
+    {% if cookiecutter.is_writting_to_sqs == "true" -%}
    SQS_QUEUE_ARN = module.@{{ cookiecutter.sqs_queue_underscore }}.arn
    {% endif -%}
   }
