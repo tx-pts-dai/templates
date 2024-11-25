@@ -6,7 +6,8 @@
     "schedule_expression": "cron(0 8 * * ? *)",
     "schedule_timezone": "Europe/Zurich",
     "sqs_queue": "sample",
-    "sqs_queue_underscore": "@{{ cookiecutter.sqs_queue.lower().replace(' ', '_').replace('-', '_')}}""is_triggered_by_scheduler": "true",
+    "sqs_queue_underscore": "@{{ cookiecutter.sqs_queue.lower().replace(' ', '_').replace('-', '_')}}",
+    "is_triggered_by_scheduler": "true",
     "is_writting_to_sqs": "false",
     "is_triggered_by_sqs": "false",
     "__prompts__": {
