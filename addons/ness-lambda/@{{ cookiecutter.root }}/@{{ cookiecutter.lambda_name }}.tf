@@ -165,7 +165,7 @@ data "aws_iam_policy_document" "@{{ cookiecutter.lambda_underscore }}_permission
       "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.studio_secret}*"
     ]
   }
-  {% if @{{ cookiecutter.is_writting_to_sqs == "true" }} -%}
+  {% if cookiecutter.is_writting_to_sqs == "true" -%}
   statement {
     actions = [
       "sqs:SendMessage",
