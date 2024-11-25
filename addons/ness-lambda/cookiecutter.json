@@ -4,17 +4,19 @@
     "description": "What is the lambda doing",
     "schedule_expression": "cron(0 8 * * ? *)",
     "schedule_timezone": "Europe/Zurich",
-    "is_triggered_by_sqs": "false",
+    "sqs_queue": "sample",
     "is_triggered_by_scheduler": "true",
-    "is_triggered_by_eventbridge": "false",
+    "is_writting_to_sqs": "false",
+    "is_triggered_by_sqs": "false",
     "__prompts__": {
         "lambda_name": "The name of the lambda (ex: studio-archive-trigger)",
         "description": "One line description of what the lambda is doing",
-        "schedule_expression": "AWS EventBridge/Scheduler schedule expression",
-        "schedule_timezone": "TimeZone for the schedule expression. Only works for AWS Scheduler",
+        "schedule_expression": "AWS Scheduler schedule expression (ignored if not triggered by scheduler)",
+        "schedule_timezone": "Timezone for the schedule expression (ignored if not triggered by scheduler)",
+        "sqs_queue": "Name of the SQS queue the lambda will interact with (ignored if no interaction with SQS)",
         "is_triggered_by_sqs": "If the lambda will be triggered by a SQS queue",
         "is_triggered_by_scheduler": "If the lambda will be triggered by AWS Scheduler",
-        "is_triggered_by_eventbridge": "If the lambda will be triggered by AWS EventBridge"
+        "is_writting_to_sqs": "SQS queue the lambda will write to"
     },
     "_jinja2_env_vars": {
         "variable_start_string": "@{{",

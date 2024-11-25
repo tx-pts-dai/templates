@@ -51,24 +51,13 @@ module "@{{ cookiecutter.lambda_name }}" {
 
   reserved_concurrent_executions = var.@{{ cookiecutter.lambda_name }}.lambda_reserved_concurrent_executions
 
-  {% if cookiecutter.is_triggered_by_sqs == "true" or cookiecutter.is_triggered_by_scheduler == "true" or cookiecutter.is_triggered_by_eventbridge == "true" -%}
+  {% if cookiecutter.is_triggered_by_sqs == "true" -%}
   allowed_triggers = {
-    {% if cookiecutter.is_triggered_by_sqs == "true" -%}
     SQSQueue = {
       principal  = "sqs.amazonaws.com"
       source_arn = module.@{{ cookiecutter.lambda_name }}_queue.queue_arn
     }
-    {% endif -%}
-    {% if cookiecutter.is_triggered_by_eventbridge == "true" -%}
-     Cron = {
-      principal  = "events.amazonaws.com"
-      source_arn = aws_cloudwatch_event_rule.@{{ cookiecutter.lambda_name }}.arn
-    }
-    {% endif -%}
-  }
-  {% endif -%}
 
-  {% if cookiecutter.is_triggered_by_sqs == "true" -%}
   event_source_mapping = {
     sqs_queue = {
       maximum_batching_window_in_seconds = 5
@@ -90,19 +79,6 @@ module "@{{ cookiecutter.lambda_name }}" {
   attach_policy_json = true
   policy_json        = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}_permissions.json
 }
-
-{% if cookiecutter.is_triggered_by_eventbridge == "true" %}
-resource "aws_cloudwatch_event_rule" "@{{ cookiecutter.lambda_name }}" {
-  name                = "${var.environment}-@{{ cookiecutter.lambda_name }}"
-  description         = "@{{ cookiecutter.lambda_name }} cronjob"
-  schedule_expression = "@{{ cookiecutter.schedule_expression }}"
-}
-
-resource "aws_cloudwatch_event_target" "@{{ cookiecutter.lambda_name }}" {
-  arn  = module.@{{ cookiecutter.lambda_name }}.lambda_function_arn
-  rule  = aws_cloudwatch_event_rule.@{{ cookiecutter.lambda_name }}.id
-}
-{% endif %}
 
 {% if cookiecutter.is_triggered_by_scheduler == "true" %}
 resource "aws_scheduler_schedule" "@{{ cookiecutter.lambda_name }}" {
@@ -150,7 +126,7 @@ resource "aws_iam_policy" "@{{ cookiecutter.lambda_name }}" {
 resource "aws_iam_role" "@{{ cookiecutter.lambda_name }}" {
   name               = "${var.environment}-@{{ cookiecutter.lambda_name }}"
   description        = "Allow AWS Scheduler to invoke @{{ cookiecutter.lambda_name }} lambda"
-  assume_role_policy = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}.json
+  assume_role_policy = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}_assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "@{{ cookiecutter.lambda_name }}" {
@@ -160,11 +136,11 @@ resource "aws_iam_role_policy_attachment" "@{{ cookiecutter.lambda_name }}" {
 {% endif -%}
 
 {%- if cookiecutter.is_triggered_by_sqs == "true" %}
-module "@{{ cookiecutter.lambda_name }}_queue" {
+module "@{{ cookiecutter.sqs_queue}}_queue" {
   source  = "terraform-aws-modules/sqs/aws"
   version = "~> 4.2"
 
-  name = "${var.environment}-ness-@{{ cookiecutter.lambda_name }}"
+  name = "${var.environment}-ness-@{{ cookiecutter.sqs_queue }}"
 
   create_dlq                    = true
   dlq_message_retention_seconds = 604800                                # 604800 = 1 week
@@ -172,37 +148,7 @@ module "@{{ cookiecutter.lambda_name }}_queue" {
   redrive_policy = {
     maxReceiveCount = 2
   }
-
-  # create_queue_policy = true
-  # queue_policy_statements = {
-  #   sns = {
-  #     sid     = "SNSPublish"
-  #     actions = ["sqs:SendMessage"]
-
-  #     principals = [
-  #       {
-  #         type        = "Service"
-  #         identifiers = ["sns.amazonaws.com"]
-  #       }
-  #     ]
-
-  #     conditions = [{
-  #       test     = "ArnEquals"
-  #       variable = "aws:SourceArn"
-  #       values   = [aws_sns_topic.webhook.arn]
-  #     }]
-  #   }
-  # }
 }
-
-# resource "aws_sns_topic_subscription" "@{{ cookiecutter.lambda_name }}" {
-#   filter_policy = templatefile("${path.root}/templates/sns_subscription.json.tpl", {
-#     webhook = "archive"
-#   })
-#   topic_arn = aws_sns_topic.webhook.arn
-#   protocol  = "sqs"
-#   endpoint  = module.@{{ cookiecutter.lambda_name }}_queue.queue_arn
-# }
 {% endif -%}
 
 # Extra permissions needed by the lambda
