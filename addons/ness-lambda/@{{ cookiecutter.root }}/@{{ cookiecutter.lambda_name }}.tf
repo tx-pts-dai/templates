@@ -1,13 +1,13 @@
 locals {
   # Additional policies to attach to the lambda
-  lambda_@{{ cookiecutter.lambda_name }}_policies = [
+  lambda_@{{ cookiecutter.lambda_underscore }}_policies = [
     {% if cookiecutter.is_triggered_by_sqs == "true" -%}
     "arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole", # Needed to allow Lambda manage sqs, see https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html#events-sqs-permissions
     {% endif %}
   ]
 }
 
-variable "@{{ cookiecutter.lambda_name }}" {
+variable "@{{ cookiecutter.lambda_underscore }}" {
   description = "Configuration of the @{{ cookiecutter.lambda_name }} workflow"
   type = object({
     {% if cookiecutter.is_triggered_by_sqs == "true" -%}
@@ -27,7 +27,7 @@ variable "@{{ cookiecutter.lambda_name }}" {
   }
 }
 
-module "@{{ cookiecutter.lambda_name }}" {
+module "@{{ cookiecutter.lambda_underscore }}" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "~> 7.0"
 
@@ -55,14 +55,14 @@ module "@{{ cookiecutter.lambda_name }}" {
   allowed_triggers = {
     SQSQueue = {
       principal  = "sqs.amazonaws.com"
-      source_arn = module.@{{ cookiecutter.lambda_name }}_queue.queue_arn
+      source_arn = module.@{{ cookiecutter.lambda_underscore }}_queue.queue_arn
     }
 
   event_source_mapping = {
     sqs_queue = {
       maximum_batching_window_in_seconds = 5
       batch_size                         = var.@{{ cookiecutter.lambda_name }}.sqs_batch_size
-      event_source_arn                   = module.@{{ cookiecutter.lambda_name }}_queue.queue_arn
+      event_source_arn                   = module.@{{ cookiecutter.lambda_underscore }}_queue.queue_arn
       function_response_types            = ["ReportBatchItemFailures"]
       scaling_config = {
         # maximum_concurrency can be between 2 and 2000
@@ -72,16 +72,16 @@ module "@{{ cookiecutter.lambda_name }}" {
   }
   {% endif -%}
 
-  attach_policies    = length(local.lambda_@{{ cookiecutter.lambda_name }}_policies) > 0
-  number_of_policies = length(local.lambda_@{{ cookiecutter.lambda_name }}_policies)
-  policies           = local.lambda_@{{ cookiecutter.lambda_name }}_policies
+  attach_policies    = length(local.lambda_@{{ cookiecutter.lambda_underscore }}_policies) > 0
+  number_of_policies = length(local.lambda_@{{ cookiecutter.lambda_underscore }}_policies)
+  policies           = local.lambda_@{{ cookiecutter.lambda_underscore }}_policies
 
   attach_policy_json = true
-  policy_json        = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}_permissions.json
+  policy_json        = data.aws_iam_policy_document.@{{ cookiecutter.lambda_underscore }}_permissions.json
 }
 
 {% if cookiecutter.is_triggered_by_scheduler == "true" %}
-resource "aws_scheduler_schedule" "@{{ cookiecutter.lambda_name }}" {
+resource "aws_scheduler_schedule" "@{{ cookiecutter.lambda_underscore }}" {
   name                         = "${var.environment}-@{{ cookiecutter.lambda_name }}"
   description                  = "Schedule for @{{ cookiecutter.lambda_name }} lambda"
   schedule_expression          = "@{{ cookiecutter.schedule_expression }}"
@@ -91,12 +91,12 @@ resource "aws_scheduler_schedule" "@{{ cookiecutter.lambda_name }}" {
     mode = "OFF"
   }
   target {
-    arn      = module.@{{ cookiecutter.lambda_name }}.lambda_function_arn
-    role_arn = aws_iam_role.@{{ cookiecutter.lambda_name }}.arn
+    arn      = module.@{{ cookiecutter.lambda_underscore }}.lambda_function_arn
+    role_arn = aws_iam_role.@{{ cookiecutter.lambda_underscore }}.arn
   }
 }
 
-data "aws_iam_policy_document" "@{{ cookiecutter.lambda_name }}_assume_role" {
+data "aws_iam_policy_document" "@{{ cookiecutter.lambda_underscore }}_assume_role" {
   version = "2012-10-17"
   statement {
     actions = ["sts:AssumeRole"]
@@ -108,35 +108,35 @@ data "aws_iam_policy_document" "@{{ cookiecutter.lambda_name }}_assume_role" {
   }
 }
 
-data "aws_iam_policy_document" "@{{ cookiecutter.lambda_name }}" {
+data "aws_iam_policy_document" "@{{ cookiecutter.lambda_underscore }}" {
   version = "2012-10-17"
   statement {
     actions   = ["lambda:InvokeFunction"]
     effect    = "Allow"
-    resources = [module.@{{ cookiecutter.lambda_name }}.lambda_function_arn]
+    resources = [module.@{{ cookiecutter.lambda_underscore }}.lambda_function_arn]
   }
 }
 
-resource "aws_iam_policy" "@{{ cookiecutter.lambda_name }}" {
+resource "aws_iam_policy" "@{{ cookiecutter.lambda_underscore }}" {
   name        = "${var.environment}-@{{ cookiecutter.lambda_name }}"
   description = "Allow AWS Scheduler to invoke @{{ cookiecutter.lambda_name }} lambda"
-  policy      = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}.json
+  policy      = data.aws_iam_policy_document.@{{ cookiecutter.lambda_underscore }}.json
 }
 
-resource "aws_iam_role" "@{{ cookiecutter.lambda_name }}" {
+resource "aws_iam_role" "@{{ cookiecutter.lambda_underscore }}" {
   name               = "${var.environment}-@{{ cookiecutter.lambda_name }}"
   description        = "Allow AWS Scheduler to invoke @{{ cookiecutter.lambda_name }} lambda"
-  assume_role_policy = data.aws_iam_policy_document.@{{ cookiecutter.lambda_name }}_assume_role.json
+  assume_role_policy = data.aws_iam_policy_document.@{{ cookiecutter.lambda_underscore }}_assume_role.json
 }
 
-resource "aws_iam_role_policy_attachment" "@{{ cookiecutter.lambda_name }}" {
-  role       = aws_iam_role.@{{ cookiecutter.lambda_name }}.name
-  policy_arn = module.@{{ cookiecutter.lambda_name }}.lambda_function_arn
+resource "aws_iam_role_policy_attachment" "@{{ cookiecutter.lambda_underscore }}" {
+  role       = aws_iam_role.@{{ cookiecutter.lambda_underscore }}.name
+  policy_arn = module.@{{ cookiecutter.lambda_underscore }}.lambda_function_arn
 }
 {% endif -%}
 
 {%- if cookiecutter.is_triggered_by_sqs == "true" %}
-module "@{{ cookiecutter.sqs_queue}}_queue" {
+module "@{{ cookiecutter.sqs_queue_underscore}}_queue" {
   source  = "terraform-aws-modules/sqs/aws"
   version = "~> 4.2"
 
@@ -152,7 +152,7 @@ module "@{{ cookiecutter.sqs_queue}}_queue" {
 {% endif -%}
 
 # Extra permissions needed by the lambda
-data "aws_iam_policy_document" "@{{ cookiecutter.lambda_name }}_permissions" {
+data "aws_iam_policy_document" "@{{ cookiecutter.lambda_underscore }}_permissions" {
   statement {
     actions = [
       "secretsmanager:GetSecretValue",

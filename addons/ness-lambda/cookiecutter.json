@@ -1,6 +1,7 @@
 {
     "root": ".",
     "lambda_name": "sample",
+    "lambda_underscore": "@{{ cookiecutter.lambda_name.lower().replace(' ', '_').replace('-', '_')}}",
     "description": "What is the lambda doing",
     "schedule_expression": "cron(0 8 * * ? *)",
     "schedule_timezone": "Europe/Zurich",
@@ -16,7 +17,7 @@
         "sqs_queue": "Name of the SQS queue the lambda will interact with (ignored if no interaction with SQS)",
         "is_triggered_by_sqs": "If the lambda will be triggered by a SQS queue",
         "is_triggered_by_scheduler": "If the lambda will be triggered by AWS Scheduler",
-        "is_writting_to_sqs": "SQS queue the lambda will write to"
+        "is_writting_to_sqs": "If the lambda will write to the SQS queue"
     },
     "_jinja2_env_vars": {
         "variable_start_string": "@{{",
