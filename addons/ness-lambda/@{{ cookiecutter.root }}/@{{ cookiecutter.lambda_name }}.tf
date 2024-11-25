@@ -43,13 +43,16 @@ module "@{{ cookiecutter.lambda_underscore }}" {
   vpc_security_group_ids = [aws_security_group.vpc_lambda.id]
   attach_network_policy  = true
   environment_variables = {
-    ENVIRONMENT = var.environment
-    SECRET      = var.studio_secret
+    ENVIRONMENT  = var.environment
+    SECRET       = var.studio_secret
+    {% if cookiecutter.is_writting_to_sqs == "true" %-}
+   SQS_QUEUE_ARN = module.@{{ cookiecutter.sqs_queue_underscore }}.arn
+   {% endif -%}
   }
   create_current_version_allowed_triggers = false // If not false then we get `adding Lambda Permission (...lambda-name/SQSQueue): ...InvalidParameterValueException: We currently do not support adding policies for $LATEST.` when not set
-  cloudwatch_logs_retention_in_days       = var.@{{ cookiecutter.lambda_name }}.cloudwatch_logs_retention_in_days
+  cloudwatch_logs_retention_in_days       = var.@{{ cookiecutter.lambda_underscore }}.cloudwatch_logs_retention_in_days
 
-  reserved_concurrent_executions = var.@{{ cookiecutter.lambda_name }}.lambda_reserved_concurrent_executions
+  reserved_concurrent_executions = var.@{{ cookiecutter.lambda_underscore }}.lambda_reserved_concurrent_executions
 
   {% if cookiecutter.is_triggered_by_sqs == "true" -%}
   allowed_triggers = {
@@ -61,12 +64,12 @@ module "@{{ cookiecutter.lambda_underscore }}" {
   event_source_mapping = {
     sqs_queue = {
       maximum_batching_window_in_seconds = 5
-      batch_size                         = var.@{{ cookiecutter.lambda_name }}.sqs_batch_size
+      batch_size                         = var.@{{ cookiecutter.lambda_underscore }}.sqs_batch_size
       event_source_arn                   = module.@{{ cookiecutter.lambda_underscore }}_queue.queue_arn
       function_response_types            = ["ReportBatchItemFailures"]
       scaling_config = {
         # maximum_concurrency can be between 2 and 2000
-        maximum_concurrency = min(max(var.@{{ cookiecutter.lambda_name }}.lambda_reserved_concurrent_executions, 2), 2000)
+        maximum_concurrency = min(max(var.@{{ cookiecutter.lambda_underscore }}.lambda_reserved_concurrent_executions, 2), 2000)
       }
     }
   }
@@ -144,7 +147,7 @@ module "@{{ cookiecutter.sqs_queue_underscore}}_queue" {
 
   create_dlq                    = true
   dlq_message_retention_seconds = 604800                                # 604800 = 1 week
-  visibility_timeout_seconds    = 6 * var.@{{ cookiecutter.lambda_name }}.lambda_timeout # 6x lambda timeout, see https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html#events-sqs-queueconfig
+  visibility_timeout_seconds    = 6 * var.@{{ cookiecutter.lambda_underscore }}.lambda_timeout # 6x lambda timeout, see https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html#events-sqs-queueconfig
   redrive_policy = {
     maxReceiveCount = 2
   }
@@ -162,4 +165,16 @@ data "aws_iam_policy_document" "@{{ cookiecutter.lambda_underscore }}_permission
       "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.studio_secret}*"
     ]
   }
+  {% if @{{ cookiecutter.is_writting_to_sqs == "true" }} -%}
+  statement {
+    actions = [
+      "sqs:SendMessage",
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl"
+    ]
+    resources = [
+      module.@{{ cookiecutter.sqs_queue_underscore }}.arn
+    ]
+  }
+  {% endif -%}
 }
