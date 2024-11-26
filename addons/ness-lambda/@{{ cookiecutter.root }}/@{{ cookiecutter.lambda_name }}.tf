@@ -1,7 +1,7 @@
 locals {
   # Additional policies to attach to the lambda
   lambda_@{{ cookiecutter.lambda_underscore }}_policies = [
-    {% if cookiecutter.is_triggered_by_sqs == "true" -%}
+    {% if cookiecutter.is_triggered_by_sqs -%}
     "arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole", # Needed to allow Lambda manage sqs, see https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html#events-sqs-permissions
     {% endif -%}
   ]
@@ -10,7 +10,7 @@ locals {
 variable "@{{ cookiecutter.lambda_underscore }}" {
   description = "Configuration of the @{{ cookiecutter.lambda_name }} workflow"
   type = object({
-    {% if cookiecutter.is_triggered_by_sqs == "true" -%}
+    {% if cookiecutter.is_triggered_by_sqs -%}
     sqs_batch_size                        = number
     {% endif -%}
     cloudwatch_logs_retention_in_days     = number
@@ -18,7 +18,7 @@ variable "@{{ cookiecutter.lambda_underscore }}" {
     lambda_timeout                        = number
   })
   default = {
-    {% if cookiecutter.is_triggered_by_sqs == "true" -%}
+    {% if cookiecutter.is_triggered_by_sqs -%}
     sqs_batch_size                        = 10
     {% endif -%}
     cloudwatch_logs_retention_in_days     = 7
@@ -45,7 +45,7 @@ module "@{{ cookiecutter.lambda_underscore }}" {
   environment_variables = {
     ENVIRONMENT  = var.environment
     SECRET       = var.studio_secret
-    {% if cookiecutter.is_writing_to_sqs == "true" -%}
+    {% if cookiecutter.is_writing_to_sqs -%}
    SQS_QUEUE_ARN = module.@{{ cookiecutter.sqs_queue_underscore }}_queue.queue_arn
    {% endif -%}
   }
@@ -54,7 +54,7 @@ module "@{{ cookiecutter.lambda_underscore }}" {
 
   reserved_concurrent_executions = var.@{{ cookiecutter.lambda_underscore }}.lambda_reserved_concurrent_executions
 
-  {% if cookiecutter.is_triggered_by_sqs == "true" -%}
+  {% if cookiecutter.is_triggered_by_sqs -%}
   allowed_triggers = {
     SQSQueue = {
       principal  = "sqs.amazonaws.com"
@@ -84,7 +84,7 @@ module "@{{ cookiecutter.lambda_underscore }}" {
   policy_json        = data.aws_iam_policy_document.@{{ cookiecutter.lambda_underscore }}_permissions.json
 }
 
-{% if cookiecutter.is_triggered_by_scheduler == "true" %}
+{% if cookiecutter.is_triggered_by_scheduler %}
 resource "aws_scheduler_schedule" "@{{ cookiecutter.lambda_underscore }}" {
   name                         = "${var.environment}-@{{ cookiecutter.lambda_name }}"
   description                  = "Schedule for @{{ cookiecutter.lambda_name }} lambda"
@@ -139,7 +139,7 @@ resource "aws_iam_role_policy_attachment" "@{{ cookiecutter.lambda_underscore }}
 }
 {% endif -%}
 
-{%- if cookiecutter.is_triggered_by_sqs == "true" %}
+{%- if cookiecutter.is_triggered_by_sqs %}
 module "@{{ cookiecutter.sqs_queue_underscore}}_queue" {
   source  = "terraform-aws-modules/sqs/aws"
   version = "~> 4.2"
@@ -166,7 +166,7 @@ data "aws_iam_policy_document" "@{{ cookiecutter.lambda_underscore }}_permission
       "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.studio_secret}*"
     ]
   }
-  {% if cookiecutter.is_writing_to_sqs == "true" -%}
+  {% if cookiecutter.is_writing_to_sqs -%}
   statement {
     actions = [
       "sqs:SendMessage",

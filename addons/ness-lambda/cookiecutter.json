@@ -7,9 +7,9 @@
     "schedule_timezone": "Europe/Zurich",
     "sqs_queue": "sample",
     "sqs_queue_underscore": "@{{ cookiecutter.sqs_queue.lower().replace(' ', '_').replace('-', '_')}}",
-    "is_triggered_by_scheduler": "true",
-    "is_writing_to_sqs": "false",
-    "is_triggered_by_sqs": "false",
+    "is_triggered_by_scheduler": true,
+    "is_writing_to_sqs": true,
+    "is_triggered_by_sqs": false,
     "__prompts__": {
         "lambda_name": "The name of the lambda (will be prefixed with '<ENVIRONMENT>-' in AWS)",
         "description": "One line description of what the lambda is doing",
