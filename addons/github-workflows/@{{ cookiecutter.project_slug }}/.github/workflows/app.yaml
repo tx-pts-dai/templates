@@ -85,7 +85,7 @@ jobs:
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/${{ matrix.stack }}
       tf_backend_config_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/${{ matrix.stack }}/${{ matrix.environment }}.tfvars"
+      tf_var_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.tfvars"
       {%- endif %}
   {%- endif %}
 
@@ -122,7 +122,7 @@ jobs:
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/${{ matrix.stack }}
       tf_backend_config_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/${{ matrix.stack }}/${{ matrix.environment }}.tfvars"
+      tf_var_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.tfvars"
       {%- endif %}
 
   apply:
@@ -159,5 +159,5 @@ jobs:
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: deploy/${{ matrix.stack }}
       tf_backend_config_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/${{ matrix.stack }}/${{ matrix.environment }}.tfvars"
+      tf_var_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.tfvars"
       {%- endif %}
