@@ -3,7 +3,7 @@ locals {
   lambda_@{{ cookiecutter.lambda_underscore }}_policies = [
     {% if cookiecutter.is_triggered_by_sqs == "true" -%}
     "arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole", # Needed to allow Lambda manage sqs, see https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html#events-sqs-permissions
-    {% endif %}
+    {% endif -%}
   ]
 }
 
@@ -36,7 +36,7 @@ module "@{{ cookiecutter.lambda_underscore }}" {
   source_path            = "./lambdas/@{{ cookiecutter.lambda_name }}"
   handler                = "index.handler"
   runtime                = "nodejs20.x"
-  timeout                = var.@{{ cookiecutter.lambda_name }}.lambda_timeout
+  timeout                = var.@{{ cookiecutter.lambda_underscore }}.lambda_timeout
   memory_size            = 256
   # layers                 = [aws_lambda_layer_version.common_lib.arn]
   vpc_subnet_ids         = data.aws_subnets.private_subnets.ids
@@ -46,7 +46,7 @@ module "@{{ cookiecutter.lambda_underscore }}" {
     ENVIRONMENT  = var.environment
     SECRET       = var.studio_secret
     {% if cookiecutter.is_writting_to_sqs == "true" -%}
-   SQS_QUEUE_ARN = module.@{{ cookiecutter.sqs_queue_underscore }}.arn
+   SQS_QUEUE_ARN = module.@{{ cookiecutter.sqs_queue_underscore }}_queue.queue_arn
    {% endif -%}
   }
   create_current_version_allowed_triggers = false // If not false then we get `adding Lambda Permission (...lambda-name/SQSQueue): ...InvalidParameterValueException: We currently do not support adding policies for $LATEST.` when not set
@@ -58,14 +58,15 @@ module "@{{ cookiecutter.lambda_underscore }}" {
   allowed_triggers = {
     SQSQueue = {
       principal  = "sqs.amazonaws.com"
-      source_arn = module.@{{ cookiecutter.lambda_underscore }}_queue.queue_arn
+      source_arn = module.@{{ cookiecutter.sqs_queue_underscore }}_queue.queue_arn
     }
+  }
 
   event_source_mapping = {
     sqs_queue = {
       maximum_batching_window_in_seconds = 5
       batch_size                         = var.@{{ cookiecutter.lambda_underscore }}.sqs_batch_size
-      event_source_arn                   = module.@{{ cookiecutter.lambda_underscore }}_queue.queue_arn
+      event_source_arn                   = module.@{{ cookiecutter.sqs_queue_underscore }}_queue.queue_arn
       function_response_types            = ["ReportBatchItemFailures"]
       scaling_config = {
         # maximum_concurrency can be between 2 and 2000
@@ -152,7 +153,7 @@ module "@{{ cookiecutter.sqs_queue_underscore}}_queue" {
     maxReceiveCount = 2
   }
 }
-{% endif -%}
+{% endif %}
 
 # Extra permissions needed by the lambda
 data "aws_iam_policy_document" "@{{ cookiecutter.lambda_underscore }}_permissions" {
@@ -173,7 +174,7 @@ data "aws_iam_policy_document" "@{{ cookiecutter.lambda_underscore }}_permission
       "sqs:GetQueueUrl"
     ]
     resources = [
-      module.@{{ cookiecutter.sqs_queue_underscore }}.arn
+      module.@{{ cookiecutter.sqs_queue_underscore }}_queue.queue_arn
     ]
   }
   {% endif -%}
