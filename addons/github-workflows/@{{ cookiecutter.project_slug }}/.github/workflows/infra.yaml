@@ -26,8 +26,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        stack: [infra]
         {%- if cookiecutter.github_environments %}
+        stack: [infra]
         environment:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
@@ -49,8 +49,8 @@ jobs:
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: "deploy/infra"
-      tf_backend_config_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.tfvars"
+      tf_backend_config_files: "deploy/infra}/environments/${{ matrix.environment }}.s3.tfbackend"
+      tf_var_files: "deploy/infra/environments/${{ matrix.environment }}.tfvars"
       {%- endif %}
 
 
@@ -60,8 +60,8 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        stack: [infra]
         {%- if cookiecutter.github_environments %}
+        stack: [infra]
         environment:
           {%- for env in cookiecutter.environments %}
           - @{{ env }}
@@ -82,7 +82,7 @@ jobs:
       {%- else %}
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
-      tf_dir: "deploy/${{ matrix.stack }}"
-      tf_backend_config_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.s3.tfbackend"
-      tf_var_files: "deploy/${{ matrix.stack }}/environments/${{ matrix.environment }}.tfvars"
+      tf_dir: "deploy/infra"
+      tf_backend_config_files: "deploy/infra/environments/${{ matrix.environment }}.s3.tfbackend"
+      tf_var_files: "deploy/infra/environments/${{ matrix.environment }}.tfvars"
       {%- endif %}
