@@ -1,0 +1,13 @@
+{
+  "project_name": "My Project",
+  "project_description": "A short description of the project",
+  "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "github_repo": "@{{ cookiecutter.project_slug }}",
+  "github_org": ["dnd-it", "tx-pts-dai", "tx-group-adm"],
+  "team": "",
+  "__prompts__": {
+    "project_name": "Enter the name of the project",
+    "project_description": "Enter a short description of the project"
+  },
+  "_jinja2_env_vars": {"variable_start_string": "@{{", "variable_end_string": "}}"}
+}
