@@ -5,6 +5,8 @@
   "github_repo": "@{{ cookiecutter.project_slug }}",
   "github_org": ["dnd-it", "tx-pts-dai", "tx-group-adm"],
   "app_name": "foo",
+  "app_port": "",
+  "app_health_check_path": "/health",
   "app_subdomain": "bar",
   "aws_region": "eu-central-1",
   "infra_tf_state_key": "bllaaa-terraform.tfstate",
@@ -19,7 +21,11 @@
   "__prompts__": {
     "project_name": "Enter the name of the project",
     "project_slug": "URL Safe Project Name.",
-    "package_name": "Enter the name of the package"
+    "package_name": "Enter the name of the package",
+    "app_port": "Enter the port number for the app"
   },
-  "_jinja2_env_vars": {"variable_start_string": "@{{", "variable_end_string": "}}"}
+  "_jinja2_env_vars": {
+    "variable_start_string": "@{{",
+    "variable_end_string": "}}"
+  }
 }

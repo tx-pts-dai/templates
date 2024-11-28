@@ -16,8 +16,8 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        stack: [app]
         {%- if cookiecutter.github_environments %}
+        stack: [app]
         environment: ['dev']
         {%- else%}
         include:

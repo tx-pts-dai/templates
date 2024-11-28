@@ -49,7 +49,7 @@ jobs:
       aws_region: ${{ matrix.aws_region }}
       aws_oidc_role_arn: arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ matrix.aws_role_name }}
       tf_dir: "deploy/infra"
-      tf_backend_config_files: "deploy/infra}/environments/${{ matrix.environment }}.s3.tfbackend"
+      tf_backend_config_files: "deploy/infra/environments/${{ matrix.environment }}.s3.tfbackend"
       tf_var_files: "deploy/infra/environments/${{ matrix.environment }}.tfvars"
       {%- endif %}
 
