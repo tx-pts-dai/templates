@@ -44,7 +44,7 @@ module "@{{ cookiecutter.__lambda_name_tf_normalized }}" {
   attach_network_policy  = true
   environment_variables = {
     ENVIRONMENT  = var.environment
-    SECRET       = @{{ cookiecutter.secret_name }}
+    SECRET       = "@{{ cookiecutter.secret_name }}"
     {% if cookiecutter.is_writing_to_sqs -%}
    SQS_QUEUE_ARN = module.@{{ cookiecutter.__sqs_queue_tf_normalized }}_queue.queue_arn
    {% endif -%}
