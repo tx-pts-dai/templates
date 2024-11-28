@@ -15,6 +15,11 @@
       "title": "MKDocs",
       "description": "Cookiecutter template for MKDocs"
     },
+    "ness-lambda": {
+      "path": "./ness-lambda",
+      "title": "NetLambda",
+      "description": "To deploy a lambda with different trigger option in the Ness account"
+    },
     "github-workflows": {
       "path": "./github-workflows",
       "title": "GithubWorkflows",

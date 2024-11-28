@@ -11,5 +11,9 @@ As it's an addon, they are dependencies on terraform resources which should be p
 
 - `aws_security_group.vpc_lambda` the security group to attach to the lambda
 - `aws_vpc_security_group_egress_rule.vpc_lambda` egress in the above security group
-- `var.studio_secret` the name of the secret the lambda will use to get info on how to connect to studio
 - `var.environment` the environment for which the lambda will run
+
+## To improve
+
+- Create a "ness-lambda" terraform module and let this template instanciate the module.
+- Reduce the number of test in the template (create generic terraform file and let the use choose what to keep)
