@@ -32,13 +32,13 @@ variable "github_org" {
   default     = "@{{ cookiecutter.github_org }}"
 }
 
-variable "acm_domain_names" {
+variable "acm_domain_name" {
   description = "Main domain name"
   type        = string
-  default     = ""
 }
+
 variable "acm_alternative_domain_names" {
   description = "list of alternative domain names"
-  type        = list(any)
+  type        = list(string)
   default     = []
 }

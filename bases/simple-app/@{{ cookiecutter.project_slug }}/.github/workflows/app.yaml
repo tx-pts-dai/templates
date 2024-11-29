@@ -44,7 +44,7 @@ jobs:
     strategy:
       matrix:
         stack: [app]
-        environment: ['dev']
+        environment: [dev]
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-feature.yaml@v2
     with:
       tf_vars: |

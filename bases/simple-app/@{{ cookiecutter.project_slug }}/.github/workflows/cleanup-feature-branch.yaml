@@ -17,7 +17,7 @@ jobs:
       max-parallel: 1
       matrix:
         stack: [app]
-        environment: ["dev"]
+        environment: [dev]
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-cleanup.yaml@v2
     with:
       tf_workspace: ${{ github.head_ref || github.ref  }}

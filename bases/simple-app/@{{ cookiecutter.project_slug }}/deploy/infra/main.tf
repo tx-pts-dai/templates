@@ -1,5 +1,5 @@
 locals {
-  namespace       = var.app_name # must match the namespace in the ./deploy/application/main.tf
+  namespace       = var.app_name # must match the namespace in the ./deploy/app/main.tf
   service_account = var.app_name
 }
 

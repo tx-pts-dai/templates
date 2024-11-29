@@ -1,4 +1,4 @@
-### ALB creation handled in the Aplication repository ###
+### ALB creation handled in the Application repository ###
 ### To be removed if the ALB is created in the shared stack of infrastructure repository ###
 
 
@@ -25,7 +25,7 @@ locals {
   public_subnet_ids = data.aws_subnets.public_subnets.ids
   vpc_id            = module.network_lookup.lookup[local.network_stack].vpc_id
   domain_names = concat(
-    [var.acm_domain_names],
+    [var.acm_domain_name],
     var.acm_alternative_domain_names
   )
 }
@@ -59,7 +59,7 @@ module "acm" {
   source  = "terraform-aws-modules/acm/aws"
   version = "5.1.1"
 
-  domain_name               = var.acm_domain_names
+  domain_name               = var.acm_domain_name
   subject_alternative_names = var.acm_alternative_domain_names
   create_route53_records    = false
   validation_method         = "DNS"
