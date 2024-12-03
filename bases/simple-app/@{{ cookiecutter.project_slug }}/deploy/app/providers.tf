@@ -28,8 +28,8 @@ provider "aws" {
     tags = {
       Terraform   = "true"
       Environment = var.environment
-      Repository  = var.github_repo
-      GithubOrg   = var.github_org
+      Repository  = "@{{ cookiecutter.github_repo }}"
+      GithubOrg   = "@{{ cookiecutter.github_org }}"
     }
   }
 }

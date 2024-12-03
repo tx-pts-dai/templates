@@ -21,18 +21,6 @@ variable "environment" {
   type        = string
 }
 
-variable "github_repo" {
-  description = "Git repository name"
-  type        = string
-  default     = "@{{ cookiecutter.github_repo }}"
-}
-
-variable "github_org" {
-  description = "Git organization name"
-  type        = string
-  default     = "@{{ cookiecutter.github_org }}"
-}
-
 variable "helm_enable_ingress" {
   description = "Enable ingress for the application"
   type        = bool
