@@ -1,9 +1,11 @@
 locals {
-  iam_role_arn = data.terraform_remote_state.infra_local.outputs.iam_eks_role_arn
-}
-
-data "aws_ecr_repository" "this" {
-  name = var.github_repo
+  iam_role_arn       = data.terraform_remote_state.infra_local.outputs.iam_eks_role_arn
+  ecr_repository_url = data.terraform_remote_state.infra_local.outputs.ecr_repository_url
+  branch             = replace(trim(substr(lower(var.branch), 0, 60), "-"), "/", "-")
+  namespace          = "${var.app_name}-${local.branch}"
+  host               = "@{{ cookiecutter.zone_name }}"
+  hostname           = "${local.branch}-${var.app_name}-${local.host}"
+  acm_arn            = data.terraform_remote_state.infra_local.outputs.acm_arn
 }
 
 data "aws_lb_target_group" "this" {
@@ -27,7 +29,7 @@ resource "helm_release" "app" {
     # https://github.com/DND-IT/helm-charts/blob/main/charts/webapp/values.yaml
 
     aws_iam_role_arn: ${local.iam_role_arn}
-    image_repo: ${data.aws_ecr_repository.this.repository_url}
+    image_repo: ${local.ecr_repository_url}
     image_tag: ${var.helm_image_tag}
 
     service:
@@ -45,8 +47,8 @@ resource "helm_release" "app" {
         ${yamlencode(var.helm_deployment_annotations)}
 
     probe:
-      liveness: /api/health
-      readiness: /api/health
+      liveness: ${var.app_health_check_path}
+      readiness: ${var.app_health_check_path}
 
     env:
       ${yamlencode(var.helm_env_vars)}
@@ -58,11 +60,11 @@ resource "helm_release" "app" {
         %{endfor~}
 
     targetGroupBinding:
-      enabled: ${var.helm_enable_target_group_binding}
-      targetGroupARN: ${data.aws_lb_target_group.this.arn}
+      enabled: ${local.branch == "main" ? "true" : "false"}
+      targetGroupARN: ${local.branch == "main" ? data.aws_lb_target_group.this[0].arn : " "}
 
     ingress:
-      enabled: ${var.helm_enable_ingress}
+      enabled: ${local.branch != "main" ? true : false}
       className: alb
       annotations:
         alb.ingress.kubernetes.io/scheme: internet-facing
@@ -70,10 +72,12 @@ resource "helm_release" "app" {
         alb.ingress.kubernetes.io/group.name: ${var.app_name}
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80,"HTTPS":443}]'
         alb.ingress.kubernetes.io/ssl-redirect: '443'
-        alb.ingress.kubernetes.io/healthcheck-path: /api/health
+        alb.ingress.kubernetes.io/healthcheck-path: ${var.app_health_check_path}
         alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+        alb.ingress.kubernetes.io/certificate-arn: ${local.acm_arn}
+        alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=false
       hosts:
-        - 
+        - ${local.hostname}
       paths:
         - /
 
