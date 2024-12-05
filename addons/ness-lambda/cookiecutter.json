@@ -4,7 +4,7 @@
     "schedule_expression": "cron(0 8 * * ? *)",
     "schedule_timezone": "Europe/Zurich",
     "sqs_queue": "sample",
-    "secret_name": "example",
+    "tf_secret_name": "secret_name",
     "is_triggered_by_scheduler": true,
     "is_writing_to_sqs": true,
     "is_triggered_by_sqs": false,
@@ -17,7 +17,7 @@
         "schedule_expression": "AWS Scheduler schedule expression (ignored if not triggered by scheduler)",
         "schedule_timezone": "Timezone for the schedule expression (ignored if not triggered by scheduler)",
         "sqs_queue": "Name of the SQS queue the lambda will interact with (ignored if no interaction with SQS)",
-        "secret_name": "Name of the AWS secret the lambda will need read access",
+        "tf_secret_name": "Name of the terraform variable holding the AWS secret name the lambda will need read access",
         "is_triggered_by_sqs": "If the lambda will be triggered by a SQS queue",
         "is_triggered_by_scheduler": "If the lambda will be triggered by AWS Scheduler",
         "is_writing_to_sqs": "If the lambda will write to the SQS queue"

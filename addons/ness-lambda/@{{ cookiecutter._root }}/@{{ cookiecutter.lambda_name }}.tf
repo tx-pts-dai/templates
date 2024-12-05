@@ -44,7 +44,7 @@ module "@{{ cookiecutter.__lambda_name_tf_normalized }}" {
   attach_network_policy  = true
   environment_variables = {
     ENVIRONMENT  = var.environment
-    SECRET       = "@{{ cookiecutter.secret_name }}"
+    SECRET       = var.@{{ cookiecutter.tf_secret_name }}
     {% if cookiecutter.is_writing_to_sqs -%}
    SQS_QUEUE_ARN = module.@{{ cookiecutter.__sqs_queue_tf_normalized }}_queue.queue_arn
    {% endif -%}
@@ -86,7 +86,7 @@ module "@{{ cookiecutter.__lambda_name_tf_normalized }}" {
 
 {% if cookiecutter.is_triggered_by_scheduler %}
 resource "aws_scheduler_schedule" "@{{ cookiecutter.__lambda_name_tf_normalized }}" {
-  name                         = "${var.environment}-@{{ cookiecutter.lambda_name }}"
+  name                         = "${var.environment}-@{{ cookiecutter.lambda_name }}-${random_string.this.id}"
   description                  = "Schedule for @{{ cookiecutter.lambda_name }} lambda"
   schedule_expression          = "@{{ cookiecutter.schedule_expression }}"
   schedule_expression_timezone = "@{{ cookiecutter.schedule_timezone }}"
@@ -122,20 +122,20 @@ data "aws_iam_policy_document" "@{{ cookiecutter.__lambda_name_tf_normalized }}"
 }
 
 resource "aws_iam_policy" "@{{ cookiecutter.__lambda_name_tf_normalized }}" {
-  name        = "${var.environment}-@{{ cookiecutter.lambda_name }}"
+  name        = "${var.environment}-@{{ cookiecutter.lambda_name }}-${random_string.this.id}"
   description = "Allow AWS Scheduler to invoke @{{ cookiecutter.lambda_name }} lambda"
   policy      = data.aws_iam_policy_document.@{{ cookiecutter.__lambda_name_tf_normalized }}.json
 }
 
 resource "aws_iam_role" "@{{ cookiecutter.__lambda_name_tf_normalized }}" {
-  name               = "${var.environment}-@{{ cookiecutter.lambda_name }}"
+  name               = "${var.environment}-@{{ cookiecutter.lambda_name }}-${random_string.this.id}"
   description        = "Allow AWS Scheduler to invoke @{{ cookiecutter.lambda_name }} lambda"
   assume_role_policy = data.aws_iam_policy_document.@{{ cookiecutter.__lambda_name_tf_normalized }}_assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "@{{ cookiecutter.__lambda_name_tf_normalized }}" {
   role       = aws_iam_role.@{{ cookiecutter.__lambda_name_tf_normalized }}.name
-  policy_arn = module.@{{ cookiecutter.__lambda_name_tf_normalized }}.lambda_function_arn
+  policy_arn = aws_iam_policy.@{{ cookiecutter.__lambda_name_tf_normalized }}.arn
 }
 {% endif -%}
 
@@ -163,7 +163,7 @@ data "aws_iam_policy_document" "@{{ cookiecutter.__lambda_name_tf_normalized }}_
       "secretsmanager:DescribeSecret",
     ]
     resources = [
-      "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:@{{ cookiecutter.secret_name }}*"
+      "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.@{{ cookiecutter.tf_secret_name }}}*"
     ]
   }
   {% if cookiecutter.is_writing_to_sqs -%}
