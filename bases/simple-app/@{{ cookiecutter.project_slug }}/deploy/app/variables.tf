@@ -4,6 +4,12 @@ variable "app_name" {
   default     = "@{{ cookiecutter.app_name }}"
 }
 
+variable "branch" {
+  description = "Branch on the source repository from which the current deployment is originating"
+  type        = string
+  default     = ""
+}
+
 variable "helm_deployment_annotations" {
   description = "Annotations to add to the Kubernetes Deployment"
   type        = map(string)
@@ -13,18 +19,6 @@ variable "helm_deployment_annotations" {
 variable "environment" {
   description = "value of the environment tag"
   type        = string
-}
-
-variable "github_org" {
-  description = "Git organization name"
-  type        = string
-  default     = "dnd-it"
-}
-
-variable "github_repo" {
-  description = "Git repository name"
-  type        = string
-  default     = "@{{ cookiecutter.github_repo }}"
 }
 
 variable "helm_enable_ingress" {
@@ -74,7 +68,8 @@ variable "namespace" {
   default     = null
 }
 
-variable "tf_state_bucket" {
-  description = "The name of the S3 bucket where Terraform states are stored"
+variable "app_health_check_path" {
+  description = "application health check path"
   type        = string
+  default     = "@{{ cookiecutter.app_health_check_path }}"
 }

@@ -14,3 +14,8 @@ As it's an addon, they are dependencies on terraform resources which should be p
 - `var.studio_secret_name` the name of the secret the lambda will use to get info on how to connect to studio
 - `var.environment` the environment for which the lambda will run
 - `random_string.this` used to name some AWS resources to avoid duplicates
+
+## To improve
+
+- Create a "ness-lambda" terraform module and let this template instanciate the module.
+- Reduce the number of test in the template (create generic terraform file and let the use choose what to keep)

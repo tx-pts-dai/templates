@@ -28,8 +28,8 @@ provider "aws" {
     tags = {
       Terraform   = "true"
       Environment = var.environment
-      Repository  = var.github_repo
-      GithubOrg   = var.github_org
+      Repository  = "@{{ cookiecutter.github_repo }}"
+      GithubOrg   = "@{{ cookiecutter.github_org }}"
     }
   }
 }
@@ -57,11 +57,14 @@ data "aws_eks_cluster" "cluster" {
   name = local.cluster_name
 }
 
+data "aws_caller_identity" "current" {}
+
 data "terraform_remote_state" "infra_local" {
   backend = "s3"
   config = {
-    bucket = var.tf_state_bucket
+    bucket = "tf-state-${data.aws_caller_identity.current.account_id}"
     key    = "@{{ cookiecutter.infra_tf_state_key }}"
+    region = "@{{ cookiecutter.aws_region }}"
   }
 }
 
