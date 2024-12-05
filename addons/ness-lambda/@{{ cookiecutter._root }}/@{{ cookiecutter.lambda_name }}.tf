@@ -46,7 +46,7 @@ module "@{{ cookiecutter.__lambda_name_tf_normalized }}" {
     ENVIRONMENT  = var.environment
     SECRET       = var.@{{ cookiecutter.tf_secret_name }}
     {% if cookiecutter.is_writing_to_sqs -%}
-   SQS_QUEUE_ARN = module.@{{ cookiecutter.__sqs_queue_tf_normalized }}_queue.queue_arn
+    SQS_QUEUE_ARN = module.@{{ cookiecutter.__sqs_queue_tf_normalized }}_queue.queue_arn
    {% endif -%}
   }
   create_current_version_allowed_triggers = false // If not false then we get `adding Lambda Permission (...lambda-name/SQSQueue): ...InvalidParameterValueException: We currently do not support adding policies for $LATEST.` when not set
