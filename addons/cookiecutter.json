@@ -17,7 +17,7 @@
     },
     "ness-lambda": {
       "path": "./ness-lambda",
-      "title": "NetLambda",
+      "title": "NessLambda",
       "description": "To deploy a lambda with different trigger option in the Ness account"
     },
     "github-workflows": {
