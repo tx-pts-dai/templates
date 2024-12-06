@@ -1,8 +1,8 @@
 {
   "project_name": "My Simple App",
   "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
-  "github_repo": "@{{ cookiecutter.get('github_repo', cookiecutter.project_slug) }}",
-  "github_org": "@{{ cookiecutter.get('github_org', 'dnd-it') }}",
+  "github_repo": "@{{ cookiecutter.github_repo }}",
+  "github_org": "@{{ cookiecutter..github_org }}",
   "app_name": "foo",
   "app_port": "",
   "app_health_check_path": "/health",
