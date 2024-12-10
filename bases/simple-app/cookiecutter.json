@@ -1,28 +1,34 @@
 {
   "project_name": "My Simple App",
   "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
-  "package_name": "@{{ cookiecutter.project_slug.lower().replace('-', '_') }}",
-  "github_repo": "@{{ cookiecutter.project_slug }}",
-  "github_org": ["dnd-it", "tx-pts-dai", "tx-group-adm"],
+  "github_repo": "@{{ cookiecutter.github_repo }}",
+  "github_org": "@{{ cookiecutter.github_org }}",
   "app_name": "foo",
   "app_port": "",
   "app_health_check_path": "/health",
   "app_subdomain": "bar",
   "aws_region": "eu-central-1",
-  "infra_tf_state_key": "bllaaa-terraform.tfstate",
+  "infra_tf_state_key": "terraform.tfstate",
   "zone_name": "example.com",
   "environments": {
     "fake-env": {
       "tf_state_bucket": "some-fake-bucket",
-      "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate",
+      "tf_state_key": "@{{ cookiecutter.github_repo }}/fake-key.tfstate",
       "tf_state_region": "eu-central-1"
     }
   },
   "__prompts__": {
     "project_name": "Enter the name of the project",
-    "project_slug": "URL Safe Project Name.",
-    "package_name": "Enter the name of the package",
-    "app_port": "Enter the port number for the app"
+    "project_slug": "URL safe project Name.",
+    "github_repo": "Enter the name of the GitHub repository",
+    "github_org": "Enter the name of the GitHub organization",
+    "app_name": "Enter the name of the app",
+    "app_port": "Enter the port of the app",
+    "app_health_check_path": "Enter the health check path of the app",
+    "app_subdomain": "Enter the subdomain of the app",
+    "aws_region": "Enter the AWS region",
+    "infra_tf_state_key": "Enter the name of the Terraform state key",
+    "zone_name": "Enter the name of the Route53 zone"
   },
   "_jinja2_env_vars": {
     "variable_start_string": "@{{",
