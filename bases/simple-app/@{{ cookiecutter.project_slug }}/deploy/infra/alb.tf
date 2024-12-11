@@ -33,7 +33,7 @@ locals {
 ######## KaaS ########
 module "network_lookup" {
   source  = "tx-pts-dai/kubernetes-platform/aws//modules/ssm"
-  version = "0.9.1"
+  version = "0.9.2"
 
   base_prefix       = "infrastructure"
   stack_type        = "network"
@@ -67,7 +67,7 @@ module "acm" {
 
 module "alb" {
   source  = "terraform-aws-modules/alb/aws"
-  version = "9.11.0"
+  version = "9.12.0"
 
   name    = var.app_name
   vpc_id  = local.vpc_id
