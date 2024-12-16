@@ -30,3 +30,9 @@ variable "acm_alternative_domain_names" {
   type        = list(string)
   default     = []
 }
+
+variable "github_repo" {
+  description = "Name of the GitHub repository"
+  type        = string
+  default     = "@{{ cookiecutter.github_repo }}"
+}
