@@ -51,7 +51,7 @@ variable "helm_external_secrets" {
   default     = []
 }
 
-variable "helm_image_tag" {
+variable "image_tag" {
   description = "The tag of the image to deploy"
   type        = string
 }

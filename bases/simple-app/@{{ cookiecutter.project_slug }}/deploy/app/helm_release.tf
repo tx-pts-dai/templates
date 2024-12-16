@@ -31,7 +31,7 @@ resource "helm_release" "app" {
 
     aws_iam_role_arn: ${local.iam_role_arn}
     image_repo: ${local.ecr_repository_url}
-    image_tag: ${var.helm_image_tag}
+    image_tag: ${var.image_tag}
 
     service:
       targetPort: 8080 # Port on which the application is exposed to
