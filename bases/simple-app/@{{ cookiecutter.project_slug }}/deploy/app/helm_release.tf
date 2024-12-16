@@ -3,13 +3,14 @@ locals {
   ecr_repository_url = data.terraform_remote_state.infra_local.outputs.ecr_repository_url
   branch             = replace(trim(substr(lower(var.branch), 0, 60), "-"), "/", "-")
   namespace          = "${var.app_name}-${local.branch}"
-  host               = "@{{ cookiecutter.zone_name }}"
+  host               = var.domain_name
   hostname           = "${local.branch}-${var.app_name}-${local.host}"
   acm_arn            = data.terraform_remote_state.infra_local.outputs.acm_arn
 }
 
 data "aws_lb_target_group" "this" {
-  name = "${var.app_name}-${local.cluster_name}"
+  count = local.branch == "main" ? 1 : 0
+  name  = "${var.app_name}-${local.cluster_name}"
 }
 
 resource "helm_release" "app" {

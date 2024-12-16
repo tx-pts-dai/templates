@@ -6,10 +6,10 @@
   "app_name": "foo",
   "app_port": "",
   "app_health_check_path": "/health",
-  "app_subdomain": "bar",
   "aws_region": "eu-central-1",
   "infra_tf_state_key": "terraform.tfstate",
   "dedicated_alb": false,
+  "app_subdomain": "bar",
   "zone_name": "example.com",
   "environments": {
     "fake-env": {
@@ -26,11 +26,11 @@
     "app_name": "Enter the name of the app",
     "app_port": "Enter the port of the app",
     "app_health_check_path": "Enter the health check path of the app",
-    "app_subdomain": "Enter the subdomain of the app",
     "aws_region": "Enter the AWS region",
-    "infra_tf_state_key": "Enter the name of the Terraform state key",
     "dedicated_alb": "Do you need a dedicated ALB for this app?",
-    "zone_name": "Enter the name of the Route53 zone"
+    "app_subdomain": "Enter the subdomain of the app",
+    "zone_name": "Enter the name of the Route53 zone",
+    "infra_tf_state_key": "Enter the name of the Terraform state key"
   },
   "_jinja2_env_vars": {
     "variable_start_string": "@{{",

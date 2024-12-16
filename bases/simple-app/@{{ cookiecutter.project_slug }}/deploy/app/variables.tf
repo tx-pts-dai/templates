@@ -73,3 +73,8 @@ variable "app_health_check_path" {
   type        = string
   default     = "@{{ cookiecutter.app_health_check_path }}"
 }
+
+variable "domain_name" {
+  description = "Main domain name"
+  type        = string
+}

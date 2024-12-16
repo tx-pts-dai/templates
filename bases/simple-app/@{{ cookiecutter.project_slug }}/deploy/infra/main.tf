@@ -66,7 +66,7 @@ resource "aws_iam_policy" "get_all_secrets" {
       {
         Action   = "secretsmanager:GetSecretValue"
         Effect   = "Allow"
-        Resource = "arn:aws:secretsmanager:eu-central-1:${data.aws_caller_identity.current.account_id}:secret:discovery/ai-tools/*"
+        Resource = "arn:aws:secretsmanager:eu-central-1:${data.aws_caller_identity.current.account_id}:secret:discovery/@{{ cookiecutter.app_name }}/*"
       }
     ]
   })

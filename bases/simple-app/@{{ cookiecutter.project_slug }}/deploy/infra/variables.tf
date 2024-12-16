@@ -20,7 +20,7 @@ variable "environment" {
   type        = string
 }
 
-variable "acm_domain_name" {
+variable "domain_name" {
   description = "Main domain name"
   type        = string
 }
@@ -36,3 +36,4 @@ variable "github_repo" {
   type        = string
   default     = "@{{ cookiecutter.github_repo }}"
 }
+
