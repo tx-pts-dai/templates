@@ -19,8 +19,7 @@
     "github_repo": "Enter the name of the GitHub repository",
     "github_org": "Enter the name of the GitHub organization",
     "app_name": "Enter the name of the app",
-    "aws_region": "Enter the AWS region",
-    "infra_tf_state_key": "Enter the name of the Terraform state key"
+    "aws_region": "Enter the AWS region"
   },
   "_jinja2_env_vars": {
     "variable_start_string": "@{{",
