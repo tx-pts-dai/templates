@@ -50,7 +50,6 @@ jobs:
       tf_vars: |
         branch="${{ github.head_ref }}"
         image_tag="${{ github.sha }}"
-        app_name="@{{ cookiecutter.app_name }}-${{ github.head_ref }}"
       tf_workspace: ${{ matrix.stack }}-${{ github.head_ref }}
       environment: ${{ matrix.stack }}-${{ matrix.environment }}
 

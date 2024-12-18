@@ -7,7 +7,7 @@ variable "app_name" {
 variable "branch" {
   description = "Branch on the source repository from which the current deployment is originating"
   type        = string
-  default     = ""
+  default     = "main"
 }
 
 variable "environment" {

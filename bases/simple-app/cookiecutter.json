@@ -5,7 +5,6 @@
   "github_org": "@{{ cookiecutter.github_org }}",
   "app_name": "foo",
   "aws_region": "eu-central-1",
-  "infra_tf_state_key": "terraform.tfstate",
   "environments": {
     "fake-env": {
       "tf_state_bucket": "some-fake-bucket",
