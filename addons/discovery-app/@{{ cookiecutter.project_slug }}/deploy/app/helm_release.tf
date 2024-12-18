@@ -1,16 +1,12 @@
 locals {
   iam_role_arn       = data.terraform_remote_state.infra_local.outputs.iam_eks_role_arn
   ecr_repository_url = data.terraform_remote_state.infra_local.outputs.ecr_repository_url
-  branch             = replace(trim(substr(lower(var.branch), 0, 60), "-"), "/", "-")
-  name               = replace(trim(substr(lower(var.app_name), 0, 60), "-"), "/", "-")
-  namespace          = local.name
+  branch             = replace(lower(var.branch), "/", "-")
+  name               = replace(lower(var.app_name), "/", "-")
+  trim_app_name      = var.preview_branch ? trim(substr("${local.name}-${local.branch}", 0, 53), "-") : "${var.app_name}-${local.branch}"
+  namespace          = local.trim_app_name
   app_url            = format("https://%s", data.aws_route53_zone.zone.name)
-  hostname           = var.preview_branch ? join(".", [local.name, trimprefix(local.app_url, "https://")]) : trimprefix(local.app_url, "https://")
-}
-
-data "aws_lb_target_group" "this" {
-  count = local.branch == "main" ? 1 : 0
-  name  = "${var.app_name}-${local.cluster_name}"
+  hostname           = var.preview_branch ? join(".", [local.trim_app_name, trimprefix(local.app_url, "https://")]) : trimprefix(local.app_url, "https://")
 }
 
 data "aws_lb_target_group" "this" {
@@ -19,7 +15,7 @@ data "aws_lb_target_group" "this" {
 }
 
 resource "helm_release" "app" {
-  name             = trim(substr(var.app_name, 0, 53), "-")
+  name             = local.trim_app_name
   repository       = "https://dnd-it.github.io/helm-charts"
   chart            = "webapp"
   version          = "1.6.0"
