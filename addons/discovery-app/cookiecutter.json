@@ -5,7 +5,6 @@
   "github_org": "@{{ cookiecutter.github_org }}",
   "app_name": "foo",
   "aws_region": "eu-central-1",
-  "infra_tf_state_key": "terraform.tfstate",
   "zone_name": "example.com",
   "environments": {
     "fake-env": {
@@ -21,8 +20,7 @@
     "github_org": "Enter the name of the GitHub organization",
     "app_name": "Enter the name of the Discovery app",
     "aws_region": "Enter the AWS region",
-    "zone_name": "Enter the name of the Route53 zone",
-    "infra_tf_state_key": "Enter the name of the Terraform state key"
+    "zone_name": "Enter the name of the Route53 zone"
   },
   "_jinja2_env_vars": {
     "variable_start_string": "@{{",
