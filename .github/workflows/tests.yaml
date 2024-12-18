@@ -27,4 +27,4 @@ jobs:
           cookiecutter --no-input --directory addons/flux-cronjob-deployment --output-dir test/flux-cronjob-deployment . github_repo=flux-cronjob-repo github_org=tx-pts-dai
           cookiecutter --no-input --directory addons/flux-service-deployment --output-dir test/flux-service-deployment . github_repo=flux-service-repo github_org=dnd-it
           cookiecutter --no-input --directory addons/github-workflows --output-dir test/github-workflows . github_repo=github-workflows-repo github_org=tx-group-adm
-          ßcookiecutter --no-input --directory addons/discovery-app --output-dir test/discovery-app . github_repo=discovery-app-repo github_org=tx-group-adm
+          cookiecutter --no-input --directory addons/discovery-app --output-dir test/discovery-app . github_repo=discovery-app-repo github_org=tx-group-adm
