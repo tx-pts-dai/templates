@@ -1,4 +1,5 @@
 locals {
+  app_name        = var.app_name
   namespace       = var.app_name # must match the namespace in the ./deploy/app/main.tf
   service_account = var.app_name
 }
@@ -17,8 +18,6 @@ module "platform_ssm" {
 resource "aws_ecr_repository" "this" {
   name                 = var.github_repo
   image_tag_mutability = "MUTABLE"
-
-  force_delete = true
 }
 
 resource "aws_ecr_lifecycle_policy" "this" {
@@ -41,11 +40,11 @@ resource "aws_ecr_lifecycle_policy" "this" {
       },
       {
         "rulePriority" : 2,
-        "description" : "Keep last 9000 images",
+        "description" : "Keep last 100 images",
         "selection" : {
           "tagStatus" : "any",
           "countType" : "imageCountMoreThan",
-          "countNumber" : 9000
+          "countNumber" : 100
         },
         "action" : {
           "type" : "expire"
@@ -57,7 +56,7 @@ EOF
 }
 
 resource "aws_iam_policy" "get_all_secrets" {
-  name        = "GetAllSecretsPolicy-${var.app_name}"
+  name        = "GetAllSecretsPolicy-${local.app_name}"
   description = "Policy to allow getting all secrets from AWS Secrets Manager"
 
   policy = jsonencode({
@@ -76,7 +75,7 @@ module "iam_eks_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-eks-role"
   version = "5.32.0"
 
-  role_name_prefix = "${var.app_name}-"
+  role_name_prefix = "${local.app_name}-"
 
   assume_role_condition_test = "StringLike"
   cluster_service_accounts = {
@@ -87,5 +86,6 @@ module "iam_eks_role" {
   # Create and set additional policies here
   role_policy_arns = {
     get_all_secrets = aws_iam_policy.get_all_secrets.arn
+    # s3 = aws_iam_policy.read_s3.arn
   }
 }

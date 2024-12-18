@@ -1,13 +1,21 @@
 locals {
-  iam_role_arn = data.terraform_remote_state.infra_local.outputs.iam_eks_role_arn
-}
-
-data "aws_ecr_repository" "this" {
-  name = var.github_repo
+  iam_role_arn       = data.terraform_remote_state.infra_local.outputs.iam_eks_role_arn
+  ecr_repository_url = data.terraform_remote_state.infra_local.outputs.ecr_repository_url
+  branch             = replace(trim(substr(lower(var.branch), 0, 60), "-"), "/", "-")
+  name               = replace(trim(substr(lower(var.app_name), 0, 60), "-"), "/", "-")
+  namespace          = local.name
+  app_url            = format("https://%s", data.aws_route53_zone.zone.name)
+  hostname           = var.preview_branch ? join(".", [local.name, trimprefix(local.app_url, "https://")]) : trimprefix(local.app_url, "https://")
 }
 
 data "aws_lb_target_group" "this" {
-  name = "${var.app_name}-${local.cluster_name}"
+  count = local.branch == "main" ? 1 : 0
+  name  = "${var.app_name}-${local.cluster_name}"
+}
+
+data "aws_lb_target_group" "this" {
+  count = var.preview_branch ? "0" : "1"
+  name  = "${var.app_name}-${local.cluster_name}"
 }
 
 resource "helm_release" "app" {
@@ -15,7 +23,7 @@ resource "helm_release" "app" {
   repository       = "https://dnd-it.github.io/helm-charts"
   chart            = "webapp"
   version          = "1.6.0"
-  namespace        = coalesce(var.namespace, data.terraform_remote_state.infra_local.outputs.k8s_namespace)
+  namespace        = local.namespace
   create_namespace = true
   atomic           = true
   cleanup_on_fail  = true
@@ -27,8 +35,8 @@ resource "helm_release" "app" {
     # https://github.com/DND-IT/helm-charts/blob/main/charts/webapp/values.yaml
 
     aws_iam_role_arn: ${local.iam_role_arn}
-    image_repo: ${data.aws_ecr_repository.this.repository_url}
-    image_tag: ${var.helm_image_tag}
+    image_repo: ${local.ecr_repository_url}
+    image_tag: ${var.image_tag}
 
     service:
       targetPort: 8080 # Port on which the application is exposed to
@@ -58,24 +66,25 @@ resource "helm_release" "app" {
         %{endfor~}
 
     targetGroupBinding:
-      enabled: ${var.helm_enable_target_group_binding}
-      targetGroupARN: ${data.aws_lb_target_group.this.arn}
+      enabled:  ${var.preview_branch ? "false" : "true"}
+      targetGroupARN: ${var.preview_branch ? " " : data.aws_lb_target_group.this[0].arn}
 
     ingress:
-      enabled: ${var.helm_enable_ingress}
+      enabled: ${local.branch != "main" ? true : false}
       className: alb
       annotations:
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
-        alb.ingress.kubernetes.io/group.name: ${var.app_name}
+        alb.ingress.kubernetes.io/group.name: "@{{ cookiecutter.app_name }}"-preview
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80,"HTTPS":443}]'
         alb.ingress.kubernetes.io/ssl-redirect: '443'
         alb.ingress.kubernetes.io/healthcheck-path: /api/health
         alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+        alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=false
       hosts:
-        -
+        - ${local.hostname}
       paths:
-        - /
+        - /"@{{ cookiecutter.app_name }}"
 
     nodeSelector:
       kubernetes.io/arch: amd64

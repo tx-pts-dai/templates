@@ -6,6 +6,7 @@
   "app_name": "foo",
   "aws_region": "eu-central-1",
   "infra_tf_state_key": "terraform.tfstate",
+  "zone_name": "example.com",
   "environments": {
     "fake-env": {
       "tf_state_bucket": "some-fake-bucket",
@@ -18,8 +19,9 @@
     "project_slug": "URL safe project Name.",
     "github_repo": "Enter the name of the GitHub repository",
     "github_org": "Enter the name of the GitHub organization",
-    "app_name": "Enter the name of the app",
+    "app_name": "Enter the name of the Discovery app",
     "aws_region": "Enter the AWS region",
+    "zone_name": "Enter the name of the Route53 zone",
     "infra_tf_state_key": "Enter the name of the Terraform state key"
   },
   "_jinja2_env_vars": {

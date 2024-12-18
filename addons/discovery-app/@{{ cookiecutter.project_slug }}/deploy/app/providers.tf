@@ -64,7 +64,7 @@ data "terraform_remote_state" "infra_local" {
   config = {
     bucket = "tf-state-${data.aws_caller_identity.current.account_id}"
     key    = "@{{ cookiecutter.infra_tf_state_key }}"
-    region = local.region
+    region = "@{{ cookiecutter.aws_region }}"
   }
 }
 
