@@ -24,6 +24,11 @@
       "path": "./github-workflows",
       "title": "GithubWorkflows",
       "description": "Cookiecutter template for github workflows"
+    },
+    "discovery-app": {
+      "path": "./discovery-app",
+      "title": "DiscoveryApp",
+      "description": "Discovery App template for adapting simple app template to Discovery use case"
     }
   }
 }

@@ -17,11 +17,11 @@ jobs:
       max-parallel: 1
       matrix:
         stack: [app]
-        environment: [dev]
+        environment: [preview]
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-cleanup.yaml@v2
     with:
-      tf_workspace: ${{ github.head_ref || github.ref  }}
+      tf_workspace: ${{ github.head_ref }}
       tf_vars: |
         image_tag="not_needed_for_destroy"
-        branch="${{ github.head_ref || github.ref }}"
+        branch="${{ github.head_ref }}"
       environment: ${{ matrix.stack }}-${{ matrix.environment }}

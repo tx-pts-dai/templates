@@ -4,27 +4,35 @@ variable "app_name" {
   default     = "@{{ cookiecutter.app_name }}"
 }
 
+variable "branch" {
+  description = "Branch on the source repository from which the current deployment is originating"
+  type        = string
+  default     = "main"
+}
+
+variable "environment" {
+  description = "Value of the environment tag"
+  type        = string
+}
+
+variable "github_org" {
+  description = "Name of the GitHub organization"
+  type        = string
+  default     = "@{{ cookiecutter.github_org }}"
+}
+
+variable "github_repo" {
+  description = "Name of the GitHub repository"
+  type        = string
+  default     = "@{{ cookiecutter.github_repo }}"
+}
+
 variable "helm_deployment_annotations" {
   description = "Annotations to add to the Kubernetes Deployment"
   type        = map(string)
   default     = {}
 }
 
-variable "environment" {
-  description = "value of the environment tag"
-  type        = string
-}
-
-variable "github_org" {
-  description = "Git organization name"
-  type        = string
-  default     = "dnd-it"
-}
-variable "github_repo" {
-  description = "Git repository name"
-  type        = string
-  default     = "@{{ cookiecutter.github_repo }}"
-}
 variable "helm_enable_ingress" {
   description = "Enable ingress for the application"
   type        = bool
@@ -55,24 +63,25 @@ variable "helm_external_secrets" {
   default     = []
 }
 
-variable "helm_image_tag" {
-  description = "The tag of the image to deploy"
-  type        = string
-}
-
 variable "helm_set" {
   description = "Values to pass to the Helm chart"
   type        = any
   default     = {}
 }
 
-variable "namespace" {
-  description = "Kubernetes namespace to deploy the application into"
+variable "image_tag" {
+  description = "The tag of the image to deploy"
   type        = string
-  default     = null
 }
 
-variable "tf_state_bucket" {
-  description = "The name of the S3 bucket where Terraform states are stored"
+variable "preview_branch" {
+  description = "Enable preview branch resources"
+  type        = bool
+  default     = false
+}
+
+variable "zone_name" {
+  description = "The name of the Route53 zone to use for the application."
   type        = string
 }
+

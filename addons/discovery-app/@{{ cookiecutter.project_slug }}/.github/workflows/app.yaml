@@ -29,7 +29,7 @@ jobs:
       matrix:
         stack: [app]
         environment:
-          {%- for env in cookiecutter.environments %}
+        {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
     uses: tx-pts-dai/github-workflows/.github/workflows/docker-build-push-ecr.yaml@v2
@@ -37,20 +37,20 @@ jobs:
       environment: ${{ matrix.stack }}-${{ matrix.environment }}
       docker_context: app
 
-  deploy_feature:
+  preview:
     if: github.event_name == 'pull_request'
     name: Deploy feature branch
     needs: [build_push]
     strategy:
       matrix:
         stack: [app]
-        environment: [dev]
+        environment: [preview]
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-feature.yaml@v2
     with:
       tf_vars: |
         branch="${{ github.head_ref }}"
         image_tag="${{ github.sha }}"
-      tf_workspace: ${{ github.head_ref }}
+      tf_workspace: ${{ matrix.stack }}-${{ github.head_ref }}
       environment: ${{ matrix.stack }}-${{ matrix.environment }}
 
   plan:
@@ -61,7 +61,7 @@ jobs:
       matrix:
         stack: [app]
         environment:
-          {%- for env in cookiecutter.environments %}
+        {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-plan.yaml@v2
@@ -79,7 +79,7 @@ jobs:
       matrix:
         stack: [app]
         environment:
-          {%- for env in cookiecutter.environments %}
+        {%- for env in cookiecutter.environments %}
           - @{{ env }}
           {%- endfor %}
     uses: tx-pts-dai/github-workflows/.github/workflows/tf-apply.yaml@v2
