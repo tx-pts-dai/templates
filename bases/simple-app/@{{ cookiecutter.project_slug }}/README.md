@@ -24,3 +24,8 @@ Testing infrastructure changes is performed on each feature branch ( `terraform 
 ### Application
 
 Manual deployment to staging environments can be performed in Github through "Actions" -> "Application" -> "Run workflow" button. Example [ai-tools](https://github.com/DND-IT/discovery-ai-tools/actions/workflows/application.yaml)
+
+### Health check and url
+
+The app can be tested by targeting the path /api/health.
+The health path is defined in the app code and hardcoded in the [helm_release resource](./deploy/app/helm_release.tf)

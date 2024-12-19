@@ -5,7 +5,6 @@
   "github_org": "@{{ cookiecutter.github_org }}",
   "app_name": "foo",
   "aws_region": "eu-central-1",
-  "zone_name": "example.com",
   "environments": {
     "fake-env": {
       "tf_state_bucket": "some-fake-bucket",
@@ -19,8 +18,7 @@
     "github_repo": "Enter the name of the GitHub repository",
     "github_org": "Enter the name of the GitHub organization",
     "app_name": "Enter the name of the Discovery app",
-    "aws_region": "Enter the AWS region",
-    "zone_name": "Enter the name of the Route53 zone"
+    "aws_region": "Enter the AWS region"
   },
   "_jinja2_env_vars": {
     "variable_start_string": "@{{",

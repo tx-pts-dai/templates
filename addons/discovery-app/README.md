@@ -1,6 +1,6 @@
 # discovery-app addon
 
-This template is tailored on Discivery application deployment and it's meant to me applied after the (simple-app)[../../bases/simple-app] template
+This template is tailored on Discovery application deployment and it's meant to me applied after the (simple-app)[../../bases/simple-app] template
 
 Discovery applications rely on the same ALB while there's path base listener rule to forward the requests to the proper Target Group.
 
