@@ -5,8 +5,8 @@ terraform {
   required_version = "~> 1.10.0"
 
   backend "s3" {
-    dynamodb_table = "terraform-lock"
-    encrypt        = true
+    use_lockfile = true
+    encrypt      = true
   }
 
   required_providers {
@@ -64,7 +64,7 @@ data "terraform_remote_state" "infra_local" {
   config = {
     bucket = "tf-state-${data.aws_caller_identity.current.account_id}"
     key    = "terraform.tfstate"
-    region = local.region
+    region = "@{{ cookiecutter.aws_region }}"
   }
 }
 
@@ -72,9 +72,8 @@ module "platform_ssm" {
   source  = "tx-pts-dai/kubernetes-platform/aws//modules/ssm"
   version = "0.7.0"
 
-  base_prefix       = "infrastructure"
-  stack_type        = "platform"
-  stack_name_prefix = ""
+  base_prefix = "infrastructure"
+  stack_type  = "platform"
 
   lookup = ["cluster_name"]
 }

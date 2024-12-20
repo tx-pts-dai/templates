@@ -4,29 +4,20 @@ variable "app_name" {
   default     = "@{{ cookiecutter.app_name }}"
 }
 
-variable "app_port" {
-  description = "Application port number"
-  type        = string
-  default     = "@{{ cookiecutter.app_port }}"
-}
-
-variable "app_health_check_path" {
-  description = "Application health check path"
-  type        = string
-  default     = "@{{ cookiecutter.app_health_check_path }}"
-}
 variable "environment" {
   description = "value of the environment tag"
   type        = string
 }
 
-variable "acm_domain_name" {
-  description = "Main domain name"
+variable "github_repo" {
+  description = "Git repository name"
   type        = string
+  default     = "@{{ cookiecutter.github_repo }}"
 }
 
-variable "acm_alternative_domain_names" {
-  description = "list of alternative domain names"
-  type        = list(string)
-  default     = []
+variable "github_org" {
+  description = "Git organization name"
+  type        = string
+  default     = "dnd-it"
 }
+

@@ -17,7 +17,7 @@
     "project_slug": "URL safe project Name.",
     "github_repo": "Enter the name of the GitHub repository",
     "github_org": "Enter the name of the GitHub organization",
-    "app_name": "Enter the name of the app",
+    "app_name": "Enter the name of the Discovery app",
     "aws_region": "Enter the AWS region"
   },
   "_jinja2_env_vars": {

@@ -3,11 +3,11 @@ locals {
 }
 
 terraform {
-  required_version = "~> 1.9.0"
+  required_version = "~> 1.10.0"
 
   backend "s3" {
-    dynamodb_table = "terraform-lock"
-    encrypt        = true
+    use_lockfile = true
+    encrypt      = true
   }
 
   required_providers {
@@ -25,8 +25,8 @@ provider "aws" {
     tags = {
       Terraform   = "true"
       Environment = var.environment
-      GithubRepo  = "@{{ cookiecutter.github_repo }}"
-      GithubOrg   = "@{{ cookiecutter.github_org }}"
+      GithubRepo  = var.github_repo
+      GithubOrg   = var.github_org
     }
   }
 }
