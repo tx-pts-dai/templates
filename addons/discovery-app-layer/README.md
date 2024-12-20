@@ -6,5 +6,5 @@ Discovery applications rely on the same ALB while there's path base listener rul
 
 **Note**:
 
-- the ALB is creted in the discovery-infrastructure repository; a listener rule and target group dedicated to the service needs to be created before applying the simple-app and discocvery-app templates
+- the ALB is created in the discovery-infrastructure repository; a listener rule and target group dedicated to the service needs to be created before applying the simple-app and discovery-app templates
 - the ALB for the preview branches (feature branches) is creted by the annotations defined in the helm release terraform resource.
