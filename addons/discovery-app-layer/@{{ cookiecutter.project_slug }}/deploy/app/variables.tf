@@ -1,5 +1,5 @@
 variable "app_name" {
-  description = "Name of the application"
+  description = "Name of the application. Do not use var.app_name directly, use local.app_name instead."
   type        = string
   default     = "@{{ cookiecutter.app_name }}"
 }
@@ -33,20 +33,8 @@ variable "helm_deployment_annotations" {
   default     = {}
 }
 
-variable "helm_enable_ingress" {
-  description = "Enable ingress for the application"
-  type        = bool
-  default     = false
-}
-
 variable "helm_enable_scaling" {
   description = "Enable scaling (HPA) of the deployment"
-  type        = bool
-  default     = false
-}
-
-variable "helm_enable_target_group_binding" {
-  description = "Enable binding to a target group"
   type        = bool
   default     = false
 }

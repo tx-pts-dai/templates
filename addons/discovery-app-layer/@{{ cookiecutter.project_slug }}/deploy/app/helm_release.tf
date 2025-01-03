@@ -1,8 +1,7 @@
 locals {
   iam_role_arn       = data.terraform_remote_state.infra_local.outputs.iam_eks_role_arn
   ecr_repository_url = data.terraform_remote_state.infra_local.outputs.ecr_repository_url
-  branch             = trim(replace(substr(lower(var.branch), 0, 53), "/", "-"), "-")
-  app_name           = "${var.app_name}-${local.branch}"
+  app_name           = lower(trim(substr(join("-", [var.app_name, replace(replace(var.branch, "/", "-"), ".", "-")]), 0, 53), "-")) # Sanitized app name
   namespace          = local.app_name
   app_url            = format("https://%s", data.aws_route53_zone.zone.name)
   hostname           = var.preview_branch ? join(".", [local.app_name, trimprefix(local.app_url, "https://")]) : trimprefix(local.app_url, "https://")
@@ -18,7 +17,7 @@ resource "helm_release" "app" {
   repository       = "https://dnd-it.github.io/helm-charts"
   chart            = "webapp"
   version          = "1.6.0"
-  namespace        = local.namespace
+  namespace        = local.app_name
   create_namespace = true
   atomic           = true
   cleanup_on_fail  = true
@@ -65,7 +64,7 @@ resource "helm_release" "app" {
       targetGroupARN: ${var.preview_branch ? " " : data.aws_lb_target_group.this[0].arn}
 
     ingress:
-      enabled: ${local.branch != "main" ? true : false}
+      enabled: ${var.preview_branch ? true : false}
       className: alb
       annotations:
         alb.ingress.kubernetes.io/scheme: internet-facing
