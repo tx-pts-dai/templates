@@ -9,8 +9,8 @@ repo_url: https://github.com/@{{ cookiecutter.github_org }}/@{{ cookiecutter.git
 
 theme:
   name: material
-  logo: images/logo.png
-  favicon: images/favicon.png
+  logo: static/logo.png
+  favicon: static/favicon.png
   palette:
     - scheme: default
       primary: indigo
@@ -76,7 +76,7 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets:
       check_paths: true
-      # base_path: docs
   - pymdownx.superfences
+  - pymdownx.magiclink
   - toc:
       permalink: true
