@@ -1,6 +1,6 @@
 # Simple App Template
 
-This Template contains the code for deploying a simple application to AWS using Terraform and Helm.
+A minimal template for deploying an application to AWS using Terraform and Helm.
 
 ## Project Structure
 
@@ -8,7 +8,7 @@ The project's structure is designed to be clear and maintainable, enabling effic
 
 ```
 My Simple App/
-├── app/          # Application source code (e.g., Python Flask app) (modify as needed)
+├── app/          # Application source code (e.g. Python Flask app) (modify as needed)
 │   └── ...
 ├── deploy/       # Terraform code for infrastructure deployments
 │   ├── app/      # Helm deployments for the application

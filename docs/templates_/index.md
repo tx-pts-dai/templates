@@ -1,13 +1,7 @@
 # Templates
 
-# Bases
+- Bases: These are base templates intended to serve as bootstrap templates for new projects. They follow the opinionated golden paths recommended by the Tamedia Core engineering organisation.
 
-Base templates are designed to be used as a bootstrap template for new projects. This are opinionated the golden paths for the Tamedia Core engineering organisation.
+- Addons: These templates are designed to be integrated into existing projects. They offer a structured approach to adding new features and are also opinionated in nature.
 
-# Addons
-
-Addon templates are designed to be used with already existing projects. They are opinionated and provide a structured approach to adding new features to your project.
-
-# External
-
-Templates stored in external repositories.
+- External: This section lists templates that are stored in external repositories.

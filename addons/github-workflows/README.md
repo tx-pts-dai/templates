@@ -1,3 +1,3 @@
 # Github Workflows
 
-Template for creating a Github workflows.
+Template for creating Github workflows and Terraform base modules.

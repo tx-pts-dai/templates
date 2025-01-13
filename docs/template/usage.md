@@ -1,6 +1,6 @@
-## Usage Instructions¶
+## Usage Instructions
 
-The preferred way to use the template is through the [tam-cli](https://github.com/DND-IT/tam-cli) tool. This tool allows you to easily initialize a new project with the template.
+The preferred way to use the template is through the [tam-cli](https://github.com/DND-IT/tam-cli) tool. This tool allows you to easily initialize a new project with a template.
 
 ### Installation
 
