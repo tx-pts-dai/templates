@@ -28,3 +28,7 @@ mkdocs
 ```
 
 All the variables in the `cookiecutter.json` file are required to be used at least once in the template files otherwise an error will be produced.
+
+## Tamcli
+
+The `tamcli` tool is used to generate projects from the templates. It is a wrapper around the `cookiecutter` tool that adds some additional functionality like providing static input for the cookiecutter variables.

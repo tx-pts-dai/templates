@@ -59,7 +59,7 @@ plugins:
   - search:
       lang:
         - en
-  - tags
+  - tags:
 
 markdown_extensions:
   - attr_list
@@ -67,6 +67,7 @@ markdown_extensions:
   - codehilite
   - footnotes
   - md_in_html
+  - pymdownx.progressbar
   - pymdownx.critic
   - pymdownx.details
   - pymdownx.highlight:
