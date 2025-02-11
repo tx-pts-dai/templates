@@ -3,9 +3,9 @@ site_name: Tamedia Technology Templates
 site_description: Cookiecutter template for Tamedia Technology projects
 docs_dir: docs/
 site_author: dai
-site_url: https://tx-pts-dai.github.io/templates/
-repo_name: tx-pts-dai/templates
-repo_url: https://github.com/tx-pts-dai/templates
+site_url: https://dnd-it.github.io/templates/
+repo_name: DND-IT/templates
+repo_url: https://github.com/DND-IT/templates
 
 theme:
   name: material
@@ -48,7 +48,7 @@ theme:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/tx-pts-dai/templates
+      link: https://github.com/DND-IT/templates
   analytics:
     provider: google
     property: G-J2L3YBBVQJ
