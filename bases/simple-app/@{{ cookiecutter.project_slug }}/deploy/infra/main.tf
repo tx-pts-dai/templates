@@ -6,7 +6,7 @@ locals {
 
 module "platform_ssm" {
   source  = "tx-pts-dai/kubernetes-platform/aws//modules/ssm"
-  version = "0.9.2"
+  version = "0.11.3"
 
   base_prefix       = "infrastructure"
   stack_type        = "platform"
