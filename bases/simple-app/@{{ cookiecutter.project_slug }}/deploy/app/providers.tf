@@ -2,7 +2,7 @@ locals {
   region = "@{{ cookiecutter.aws_region }}"
 }
 terraform {
-  required_version = "~> 1.9.0"
+  required_version = "~> 1.10.0"
 
   backend "s3" {
     dynamodb_table = "terraform-lock"
@@ -28,7 +28,7 @@ provider "aws" {
     tags = {
       Terraform   = "true"
       Environment = var.environment
-      Repository  = var.github_repo
+      GithubRepo  = var.github_repo
       GithubOrg   = var.github_org
     }
   }
@@ -57,17 +57,20 @@ data "aws_eks_cluster" "cluster" {
   name = local.cluster_name
 }
 
+data "aws_caller_identity" "current" {}
+
 data "terraform_remote_state" "infra_local" {
   backend = "s3"
   config = {
-    bucket = var.tf_state_bucket
-    key    = "@{{ cookiecutter.infra_tf_state_key }}"
+    bucket = "tf-state-${data.aws_caller_identity.current.account_id}"
+    key    = "terraform.tfstate"
+    region = local.region
   }
 }
 
 module "platform_ssm" {
   source  = "tx-pts-dai/kubernetes-platform/aws//modules/ssm"
-  version = "0.7.0"
+  version = "0.11.3"
 
   base_prefix       = "infrastructure"
   stack_type        = "platform"

@@ -20,13 +20,11 @@ variable "github_org" {
   type        = string
   default     = "dnd-it"
 }
-
 variable "github_repo" {
   description = "Git repository name"
   type        = string
   default     = "@{{ cookiecutter.github_repo }}"
 }
-
 variable "helm_enable_ingress" {
   description = "Enable ingress for the application"
   type        = bool

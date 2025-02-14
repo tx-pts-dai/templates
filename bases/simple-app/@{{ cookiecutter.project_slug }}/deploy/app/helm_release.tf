@@ -14,7 +14,7 @@ resource "helm_release" "app" {
   name             = trim(substr(var.app_name, 0, 53), "-")
   repository       = "https://dnd-it.github.io/helm-charts"
   chart            = "webapp"
-  version          = "1.3.0"
+  version          = "1.6.0"
   namespace        = coalesce(var.namespace, data.terraform_remote_state.infra_local.outputs.k8s_namespace)
   create_namespace = true
   atomic           = true
@@ -73,7 +73,7 @@ resource "helm_release" "app" {
         alb.ingress.kubernetes.io/healthcheck-path: /api/health
         alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
       hosts:
-        - 
+        -
       paths:
         - /
 

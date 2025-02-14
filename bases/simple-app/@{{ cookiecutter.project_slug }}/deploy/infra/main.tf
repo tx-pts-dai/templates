@@ -1,12 +1,12 @@
 locals {
   app_name        = var.app_name
-  namespace       = var.app_name # must match the namespace in the ./deploy/application/main.tf
+  namespace       = var.app_name # must match the namespace in the ./deploy/app/main.tf
   service_account = var.app_name
 }
 
 module "platform_ssm" {
   source  = "tx-pts-dai/kubernetes-platform/aws//modules/ssm"
-  version = "0.7.0"
+  version = "0.11.3"
 
   base_prefix       = "infrastructure"
   stack_type        = "platform"
@@ -18,8 +18,41 @@ module "platform_ssm" {
 resource "aws_ecr_repository" "this" {
   name                 = var.github_repo
   image_tag_mutability = "MUTABLE"
+}
 
-  force_delete = true
+resource "aws_ecr_lifecycle_policy" "this" {
+  repository = aws_ecr_repository.this.name
+  policy     = <<EOF
+{
+    "rules" : [
+      {
+        "rulePriority" : 1,
+        "description" : "Delete untagged images after 8 days",
+        "selection" : {
+          "tagStatus" : "untagged",
+          "countType" : "sinceImagePushed",
+          "countUnit" : "days",
+          "countNumber" : 8
+        },
+        "action" : {
+          "type" : "expire"
+        }
+      },
+      {
+        "rulePriority" : 2,
+        "description" : "Keep last 100 images",
+        "selection" : {
+          "tagStatus" : "any",
+          "countType" : "imageCountMoreThan",
+          "countNumber" : 100
+        },
+        "action" : {
+          "type" : "expire"
+        }
+      }
+    ]
+}
+EOF
 }
 
 resource "aws_ecr_lifecycle_policy" "this" {
@@ -67,7 +100,7 @@ resource "aws_iam_policy" "get_all_secrets" {
       {
         Action   = "secretsmanager:GetSecretValue"
         Effect   = "Allow"
-        Resource = "arn:aws:secretsmanager:eu-central-1:${data.aws_caller_identity.current.account_id}:secret:discovery/ai-tools/*"
+        Resource = "arn:aws:secretsmanager:eu-central-1:${data.aws_caller_identity.current.account_id}:secret:discovery/@{{ cookiecutter.app_name }}/*"
       }
     ]
   })
@@ -75,7 +108,7 @@ resource "aws_iam_policy" "get_all_secrets" {
 
 module "iam_eks_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-eks-role"
-  version = "5.32.0"
+  version = "5.52.2"
 
   role_name_prefix = "${local.app_name}-"
 

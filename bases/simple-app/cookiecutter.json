@@ -1,25 +1,27 @@
 {
   "project_name": "My Simple App",
   "project_slug": "@{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
-  "package_name": "@{{ cookiecutter.project_slug.lower().replace('-', '_') }}",
-  "github_repo": "@{{ cookiecutter.project_slug }}",
-  "github_org": ["dnd-it", "tx-pts-dai", "tx-group-adm"],
+  "github_repo": "@{{ cookiecutter.github_repo }}",
+  "github_org": "@{{ cookiecutter.github_org }}",
   "app_name": "foo",
-  "app_subdomain": "bar",
   "aws_region": "eu-central-1",
-  "infra_tf_state_key": "bllaaa-terraform.tfstate",
-  "zone_name": "example.com",
   "environments": {
     "fake-env": {
       "tf_state_bucket": "some-fake-bucket",
-      "tf_state_key": "@{{ cookiecutter.project_slug }}/fake-key.tfstate",
+      "tf_state_key": "@{{ cookiecutter.github_repo }}/fake-key.tfstate",
       "tf_state_region": "eu-central-1"
     }
   },
   "__prompts__": {
     "project_name": "Enter the name of the project",
-    "project_slug": "URL Safe Project Name.",
-    "package_name": "Enter the name of the package"
+    "project_slug": "URL safe project Name.",
+    "github_repo": "Enter the name of the GitHub repository",
+    "github_org": "Enter the name of the GitHub organization",
+    "app_name": "Enter the name of the app",
+    "aws_region": "Enter the AWS region"
   },
-  "_jinja2_env_vars": {"variable_start_string": "@{{", "variable_end_string": "}}"}
+  "_jinja2_env_vars": {
+    "variable_start_string": "@{{",
+    "variable_end_string": "}}"
+  }
 }
